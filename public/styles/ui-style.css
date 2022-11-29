@@ -19,11 +19,15 @@
 }
 
 .ui-header {
-    
+
 }
 
 .ui-paragraph {
     
+}
+
+.ui-image {
+    max-width: 100%;
 }
 
 /* Helper classes */

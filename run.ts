@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import Screen from './engine/ui/Screen';
 import ParagraphUIComponent from './engine/ui/components/ParagraphUIComponent';
 import HeaderUIComponent from './engine/ui/components/HeaderUIComponent';
+import ImageUIComponent from './engine/ui/components/ImageUIComponent';
 
 const app = express();
 const server = http.createServer(app);
@@ -30,5 +31,6 @@ const screen = new Screen(
         new HeaderUIComponent('Header H1',1),
         new HeaderUIComponent('Header H2',2),
         new ParagraphUIComponent('Paragraph'),
+        new ImageUIComponent('/images/placeholder.png','Alt text'),
     ]
 );
