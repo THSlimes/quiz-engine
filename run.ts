@@ -6,6 +6,7 @@ import { Server } from 'socket.io';
 
 import Screen from './engine/ui/Screen';
 import ParagraphUIComponent from './engine/ui/components/ParagraphUIComponent';
+import HeaderUIComponent from './engine/ui/components/HeaderUIComponent';
 
 const app = express();
 const server = http.createServer(app);
@@ -26,18 +27,8 @@ server.listen(3000, () => {
 const screen = new Screen(
     'test screen',
     [
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
-        new ParagraphUIComponent('test'),
+        new HeaderUIComponent('Header H1',1),
+        new HeaderUIComponent('Header H2',2),
+        new ParagraphUIComponent('Paragraph'),
     ]
 );
