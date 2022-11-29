@@ -13,6 +13,7 @@ import ToggleButtonUIComponent from './engine/ui/components/inputs/ToggleButtonU
 import NumberInputUIComponent from './engine/ui/components/inputs/NumberInputUIComponent';
 import NextScreenButtonUIComponent from './engine/ui/components/inputs/NextScreenButtonUIComponent';
 import MultiSelectUIComponent from './engine/ui/components/inputs/MultiSelectUIComponent';
+import SelectUIComponent from './engine/ui/components/inputs/SelectUIComponent';
 
 const app = express();
 const server = http.createServer(app);
@@ -46,7 +47,8 @@ const screen = new Screen(
         'test screen 2',
         [
             new HeaderUIComponent('test screen 2'),
-            new MultiSelectUIComponent('multiselect',['option 1','option 2','option 3','option 4'],undefined,0,2),
+            new MultiSelectUIComponent('multiselect',['option 1','option 2','option 3','option 4'], undefined, 0, 2),
+            new SelectUIComponent('select', ['option 1','option 2','option 3','option 4']),
             new NextScreenButtonUIComponent('nextScreen1','next screen',true,false)
         ]
     )

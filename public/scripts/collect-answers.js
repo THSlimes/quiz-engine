@@ -4,6 +4,7 @@ const answerGetters = { // functions that define how to get the answer of a cert
     'ui-text-input': elem => elem.val(),
     'ui-number-input': elem => Number.parseFloat(elem.val()),
     'ui-toggle-button-input': elem => elem.hasClass('ui-prop-selected'),
+    'ui-select-input': elem => elem.val(),
     'ui-multi-select-input': elem => {
         const out = [];
         elem.children().filter('.ui-prop-selected').each(function() {
