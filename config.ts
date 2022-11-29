@@ -1,7 +1,7 @@
 export const CONFIG:Config = {
     serverConfig: {
         dir: '/public',
-        port: 8080
+        port: 3000
     }
 };
 

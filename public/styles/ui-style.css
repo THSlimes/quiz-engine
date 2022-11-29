@@ -1,0 +1,39 @@
+/* The screen div should fill the entire screen. */
+#screen {
+    position:fixed;
+
+    margin:0px;
+    padding:.5em;
+
+    width:100vw;
+    height:100vh;
+
+    box-sizing: border-box;
+
+}
+
+/* UIComponent classes */
+
+.ui-div {
+
+}
+
+.ui-paragraph {
+    
+}
+
+/* Helper classes */
+
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-rows {
+    flex-direction: column;
+}
+
+.flex-columns {
+    flex-direction: row;
+}
