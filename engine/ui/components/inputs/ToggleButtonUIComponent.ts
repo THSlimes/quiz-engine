@@ -17,7 +17,6 @@ export default class ToggleButtonUIComponent implements TextUIComponent, InputUI
                         type="button"
                         name="${fieldName}"
                         value="${text}"
-                        onclick="toggleSelected(this);"
                     >`;
     }
     

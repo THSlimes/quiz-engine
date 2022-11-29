@@ -3,7 +3,14 @@ import './lib/jquery.js';
 const answerGetters = { // functions that define how to get the answer of a certain input class
     'ui-text-input': elem => elem.val(),
     'ui-number-input': elem => Number.parseFloat(elem.val()),
-    'ui-toggle-button-input': elem => elem.hasClass('ui-prop-selected')
+    'ui-toggle-button-input': elem => elem.hasClass('ui-prop-selected'),
+    'ui-multi-select-input': elem => {
+        const out = [];
+        elem.children().filter('.ui-prop-selected').each(function() {
+            out.push($(this).val());
+        });
+        return out.length >= elem.attr('min') ? out : [];
+    }
 };
 
 /**
@@ -21,10 +28,11 @@ export function allAnswered() {
     const keys = Object.keys(answer);
     for (let i = 0; i < keys.length && out; i ++) {
         const val = answer[keys[i]];
-        out ||= val === true ||
+        out &&= val === true ||
                 val === false ||
                 (typeof val === 'string' && val.trim().length > 0) ||
-                typeof val === 'number'
+                typeof val === 'number' ||
+                (Array.isArray(val) && val.length !== 0)
     }
 
     return out;
