@@ -8,7 +8,7 @@ export default class ParagraphUIComponent implements TextUIComponent {
     public readonly html:string;
 
     constructor(text:string) {
-        this.html =  `<p class=${ParagraphUIComponent.CLASS_NAME}>${text}</p>`;
+        this.html =  `<p class="ui-component ${ParagraphUIComponent.CLASS_NAME}">${text}</p>`;
     }
 
 }

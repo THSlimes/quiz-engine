@@ -7,7 +7,7 @@ export default class HeaderUIComponent implements TextUIComponent {
     public readonly html:string;
 
     constructor(text:string, size:1|2|3|4|5|6=1) {
-        this.html =  `<h${size} class=${HeaderUIComponent.CLASS_NAME}>${text}</h${size}>`;
+        this.html =  `<h${size} class="ui-component ${HeaderUIComponent.CLASS_NAME}">${text}</h${size}>`;
     }
     
 }

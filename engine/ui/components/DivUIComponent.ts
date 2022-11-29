@@ -17,7 +17,7 @@ export default class DivUIComponent implements UIComponent {
     }
 
     private reloadHtml() {
-        let newHtml = `<div class="${DivUIComponent.CLASS_NAME} ${this.containerType}">`;
+        let newHtml = `<div class="ui-component ${DivUIComponent.CLASS_NAME} ${this.containerType}">`;
         for (let i = 0; i < this.children.length; i ++) {
             newHtml += this.children[i].html;
         }

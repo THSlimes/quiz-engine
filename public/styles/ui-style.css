@@ -1,18 +1,22 @@
 /* The screen div should fill the entire screen. */
 #screen {
-    position:fixed;
+    position:sticky;
 
     margin:0px;
     padding:.5em;
 
     width:100vw;
-    height:100vh;
+    /* min-height:100vh; */
 
     box-sizing: border-box;
 
 }
 
 /* UIComponent classes */
+
+.ui-component {
+    transition:125ms;
+}
 
 .ui-div {
 
@@ -31,6 +35,15 @@
 }
 
 .ui-text-input {
+}
+
+.ui-toggle-button-input {
+}
+
+/* UIComponent property classes */
+
+.ui-prop-selected {
+    filter:invert();
 }
 
 /* Helper classes */

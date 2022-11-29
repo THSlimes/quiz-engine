@@ -7,7 +7,7 @@ export default class ImageUIComponent implements UIComponent {
     public readonly html:string;
 
     constructor(source:string, alt='') {
-        this.html =  `<img class="${ImageUIComponent.CLASS_NAME}" src="${source}" alt="${alt}">`;
+        this.html =  `<img class="ui-component ${ImageUIComponent.CLASS_NAME}" src="${source}" alt="${alt}">`;
     }
     
 }
