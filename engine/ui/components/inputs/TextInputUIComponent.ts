@@ -12,7 +12,13 @@ export default class TextInputUIComponent implements TextUIComponent, InputUICom
     constructor(fieldName:string, placeholder='', initialValue='') {
         this.fieldName = fieldName;
 
-        this.html =  `<input class="ui-component ${TextInputUIComponent.CLASS_NAME}" type="text" name="${fieldName}" placeholder="${placeholder}" value="${initialValue}">`;
+        this.html =  `<input
+                        class="ui-component ui-input ${TextInputUIComponent.CLASS_NAME}"
+                        type="text"
+                        name="${fieldName}"
+                        placeholder="${placeholder}"
+                        value="${initialValue}"
+                    >`;
     }
     
 }

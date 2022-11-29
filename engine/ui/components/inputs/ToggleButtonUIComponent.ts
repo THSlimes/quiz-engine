@@ -12,7 +12,13 @@ export default class ToggleButtonUIComponent implements TextUIComponent, InputUI
     constructor(fieldName:string, text:string, selected=false) {
         this.fieldName = fieldName;
 
-        this.html =  `<input class="ui-component ${ToggleButtonUIComponent.CLASS_NAME} ${selected?'selected':''}" type="button" name="${fieldName}" value="${text}" onclick="toggleSelected(this);">`;
+        this.html =  `<input
+                        class="ui-component ui-input ${ToggleButtonUIComponent.CLASS_NAME} ${selected?'selected':''}"
+                        type="button"
+                        name="${fieldName}"
+                        value="${text}"
+                        onclick="toggleSelected(this);"
+                    >`;
     }
     
 }

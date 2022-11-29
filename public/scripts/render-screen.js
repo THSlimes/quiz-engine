@@ -1,10 +1,11 @@
 import './lib/jquery.js';
 import { socket } from './socket-io-connect.js';
+import { allAnswered } from './collect-answers.js';
 
 socket.on('render screen', renderScreen);
 
 export var currentScreen = undefined;
-function renderScreen(screen) {
+export function renderScreen(screen) {
     console.log('Rendering screen: ' + screen.name);
     
     const screenDiv = $('div#screen');
@@ -13,5 +14,9 @@ function renderScreen(screen) {
         screenDiv.append(screen.components[i].html);
     }
     
-    this.currentScreen = screen;
+    currentScreen = screen;
+
+    // enabling next screen buttons
+    if (allAnswered()) $('.ui-next-screen-button').removeAttr('disabled');
+    else $('.ui-next-screen-button').attr('disabled',true);
 }
