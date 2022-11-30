@@ -17,9 +17,9 @@ export default class GameServer {
     private readonly config:ServerConfig;
     private _running = false;
     public get running() { return this._running; }
+    private startDate:Date|undefined;
 
     private readonly clients:Array<Client> = [];
-
 
     public constructor(config:ServerConfig) {
         this.config = config;
@@ -43,6 +43,7 @@ export default class GameServer {
             });
 
             this._running = true;
+            this.startDate = new Date();
         }
         else throw new Error('Server already running.');
     }
@@ -59,6 +60,7 @@ export default class GameServer {
             this.app = undefined;
 
             this._running = false;
+            this.startDate = undefined;
             console.log('Stopped server');
         }
         else throw new Error('Server is not running.');
