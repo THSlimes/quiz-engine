@@ -1,15 +1,15 @@
 export const CONFIG:Config = {
     serverConfig: {
-        dir: '/public',
+        dir: __dirname + '/public',
         port: 3000
     }
 };
 
-interface Config {
+export interface Config {
     serverConfig:ServerConfig
 }
 
-interface ServerConfig {
+export interface ServerConfig {
     dir: string,
     port: number
 }
