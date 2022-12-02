@@ -2,11 +2,11 @@ import './lib/jquery.js';
 import { socket } from './socket-io-connect.js';
 import { allAnswered } from './collect-answers.js';
 
-socket.on('render screen', renderScreen);
+socket.on('draw screen', renderScreen);
 
 export var currentScreen = undefined;
 export function renderScreen(screen) {
-    console.log('Rendering screen: ' + screen.name);
+    console.log('Drawing screen: ' + screen.name);
     
     const screenDiv = $('div#screen');
     screenDiv.children().remove();

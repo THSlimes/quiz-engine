@@ -5,6 +5,8 @@ import { Server, Socket } from 'socket.io';
 
 import { ServerConfig } from '../config';
 import Client from './Client';
+import Player from './game/client-types/Player';
+import Game from './game/Game';
 
 export default class GameServer {
     
@@ -17,9 +19,12 @@ export default class GameServer {
     private readonly config:ServerConfig;
     private _running = false;
     public get running() { return this._running; }
-    private startDate:Date|undefined;
+    private startDate:Date|undefined; // Date this server was started on (undefined when inactive)
 
     private readonly clients:Array<Client> = [];
+
+    // game logic
+    private game:Game|undefined;
 
     public constructor(config:ServerConfig) {
         this.config = config;
@@ -72,6 +77,8 @@ export default class GameServer {
         this.clients.push(client);
         console.log(`Client ${client.id} joined. (${this.clients.length} total)`);
 
+        this.game?.connect(new Player(socket,this.game));
+
         socket.on('disconnect', reason => this.onDisconnect.bind(this)(client,reason));
     }
 
@@ -84,6 +91,11 @@ export default class GameServer {
         }
 
         console.log(`Client ${client.id} disconnected: ${reason}. (${this.clients.length} left)`);
+    }
+
+    public openGame(game:Game) {
+        if (this.game === undefined) this.game = game;
+        else throw new Error('GameServer is already hosting Game.');
     }
 
 }
