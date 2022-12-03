@@ -1,4 +1,4 @@
-import { renderScreen, currentScreen } from './render-screen.js';
+import { renderScreen, currentScreen } from './draw-screen.js';
 
 window.nextScreen = function() {
     if (currentScreen.next) {

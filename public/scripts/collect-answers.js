@@ -38,7 +38,6 @@ export function allAnswered() {
 
     return out;
 }
-window.test = () => {console.log(answer)}; // REMOVE LATER
 
 /**
  * Put the answer of an input in the 'answer' object.
@@ -67,7 +66,7 @@ $(document).on('DOMContentLoaded',function() {
     });
 
     // getting input values when they're changes
-    $(document).on('change click keydown', '.ui-input', function() {
+    $(document).on('change click keydown keyup', '.ui-input', function() {
         putAnswer(this);
     });
 });

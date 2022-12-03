@@ -15,7 +15,6 @@
 /* UIComponent classes */
 
 .ui-component {
-    transition:125ms;
 }
 
 .ui-div {
@@ -41,6 +40,7 @@
 }
 
 .ui-toggle-button-input {
+    transition:125ms;
 }
 
 .ui-select-input {
@@ -52,7 +52,7 @@
 }
 
 .ui-multi-select-button {
-
+    transition:125ms;
 }
 
 .ui-next-screen-button {

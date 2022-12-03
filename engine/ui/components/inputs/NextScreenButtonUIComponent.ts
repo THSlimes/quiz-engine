@@ -22,7 +22,7 @@ export default class NextScreenButtonUIComponent implements TextUIComponent, Inp
                         class="ui-component ${NextScreenButtonUIComponent.CLASS_NAME}"
                         type=button value="${text}"
                         ${requiresAnswers?'disabled':''}
-                        onclick="nextScreen(); ${submitAnswer?'submitAnswers();':''}"
+                        onclick="nextScreen(); ${submitAnswer?'submitAnswer();':''}"
                     >`;
     }
     

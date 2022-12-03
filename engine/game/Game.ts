@@ -1,5 +1,3 @@
-import HeaderUIComponent from "../ui/components/HeaderUIComponent";
-import Screen from "../ui/Screen";
 import Hub from "./client-types/Hub";
 import Player from "./client-types/Player";
 import GameMode from "./gamemodes/GameMode";
@@ -24,9 +22,8 @@ export default class Game {
     public connect(player:Player) {
         this.players.push(player);
         console.log(`PLayer ${player.id} joined the Game.`);
-        player.currentScreen = new Screen('test', [
-            new HeaderUIComponent('Test',1)
-        ]);
+
+        player.currentScreen = this.gamemode.namePickScreen;
         
     }
 
@@ -49,6 +46,28 @@ export default class Game {
         console.log(`Warning: Player ${player.id} is not in this Game.`);
         return false;
         
+    }
+
+    /**
+     * Checks whether a name has not been chosen by another Player.
+     * @param name suggested name
+     * @returns true if not yet picked, false otherwise
+     */
+    public usenameAvailable(username:string) {
+        return !this.players.some(player => player.username === username);
+    }
+
+    /**
+     * Gets an old Player who left, and removes them from the list.
+     * @param username username of a Player who left.
+     * @returns Player who left with given name (undefined if no such name)
+     */
+    public getOldPlayer(username:string) {
+        for (let i = this.oldPlayers.length-1; i >= 0; i --) {
+            if (this.oldPlayers[i].username === username) return this.oldPlayers.splice(i,1)[0];
+        }
+
+        return undefined;
     }
 
 }
