@@ -1,0 +1,57 @@
+div#login {
+    background: rgb(131,58,180);
+    background: linear-gradient(56deg, rgba(131,58,180,1) 0%, rgba(253,29,29,1) 50%, rgba(252,176,69,1) 100%);
+
+    position: absolute;
+    width:100vw;
+    height:100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    font-family:sans-serif;
+}
+
+div#login h1 {
+    margin:.25em;
+    font-size: 5em;
+    color:white;
+    text-align: center;
+    -webkit-text-stroke: 2.5px black;
+}
+
+div#login label {
+    color:white;
+    font-size:1.125em;
+}
+
+#login-form {
+    max-width:90%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#login-form > div {
+    display:flex;
+    justify-content: center;
+    flex-direction: row;
+    margin:.25em;
+}
+
+div#login-form input {
+    font-size:1.25em;
+    border-radius:5px;
+    margin:0px .25em 0px .25em;
+}
+
+#game-id-input {
+    width:60%;
+}
+
+#game-join-button {
+    width:40%;
+    text-align: center;
+}

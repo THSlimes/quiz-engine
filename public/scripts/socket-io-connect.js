@@ -1,3 +1,4 @@
 import './lib/socket-io.js';
 
-export const socket = io();
+const socket = io();
+export default socket;

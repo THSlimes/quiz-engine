@@ -3,10 +3,14 @@ import express, {Express, Request, Response} from 'express';
 import * as http from 'http';
 import { Server, Socket } from 'socket.io';
 
+import * as crypto from 'crypto';
+
 import { ServerConfig } from '../config';
 import Client from './Client';
+import Hub from './game/client-types/Hub';
 import Player from './game/client-types/Player';
 import Game from './game/Game';
+import Gamemode from './game/gamemodes/GameMode';
 
 export default class GameServer {
     
@@ -22,9 +26,13 @@ export default class GameServer {
     private startDate:Date|undefined; // Date this server was started on (undefined when inactive)
 
     private readonly clients:Array<Client> = [];
-
+    
     // game logic
-    private game:Game|undefined;
+    private static readonly ID_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+    private static readonly ID_LENGTH = 4;
+
+    private games:GameLibrary = {};
+    private gamePassword = "PASSWORD"; // TODO: change implementation
 
     public constructor(config:ServerConfig) {
         this.config = config;
@@ -73,13 +81,26 @@ export default class GameServer {
 
     private onConnect(socket:Socket) {
         const client = new Client(socket);
+        socket.on('disconnect', (reason) => this.onDisconnect(client, reason));
 
         this.clients.push(client);
         console.log(`Client ${client.id} joined. (${this.clients.length} total)`);
 
-        this.game?.connect(new Player(socket,this.game));
+        socket.on('join game', (id, role) => {
+            if (id in this.games) { // valid id
+                const game = this.games[id];
 
-        socket.on('disconnect', reason => this.onDisconnect.bind(this)(client,reason));
+                if (game.players.length >= game.gamemode.settings.maxPlayers) socket.emit('show error message','That Game is full.');
+                else if (role === 'player') game.connect(new Player(socket, game));
+                else if (role === 'hub') game.connect(new Hub(socket, game));
+                else console.log(`Client ${client.id} tried to use non-existent role ${role}.`);
+            }
+            else { // invalid id
+                console.log(`Client ${client.id} tried to join non-existent game ${id}.`);
+                socket.emit('show error message', 'Game could not be found.');
+            }
+        });
+
     }
 
     private onDisconnect(client:Client, reason:string) {
@@ -93,9 +114,24 @@ export default class GameServer {
         console.log(`Client ${client.id} disconnected: ${reason}. (${this.clients.length} left)`);
     }
 
-    public openGame(game:Game) {
-        if (this.game === undefined) this.game = game;
-        else throw new Error('GameServer is already hosting Game.');
+    public createGame(gamemode:Gamemode):string {
+        // generate id
+        let id;
+        do {
+            id = '';
+            while (id.length < GameServer.ID_LENGTH) {
+                id += GameServer.ID_CHARS[crypto.randomInt(GameServer.ID_CHARS.length)];
+            }
+        } while (id in this.games);
+
+        // create Game
+        this.games[id] = new Game(id, gamemode);
+
+        return id;
     }
 
+}
+
+interface GameLibrary {
+    [key: string]: Game
 }

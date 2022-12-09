@@ -9,18 +9,38 @@
     <!-- Style imports -->
     <link rel="stylesheet" href="./styles/common.css" type="text/css" />
     <link rel="stylesheet" href="./styles/ui-style.css" type="text/css" />
+    <link rel="stylesheet" href="./styles/login-style.css" type="text/css" />
 
     <!-- Script imports -->
+    <script type="module" src="./scripts/lib/jquery.js"></script>
+
     <script type="module" src="./scripts/socket-io-connect.js"></script>
+
+    <script type="module" src="./scripts/join-game.js"></script>
 
     <script type="module" src="./scripts/draw-screen.js"></script>
     <script type="module" src="./scripts/ui-functionality.js"></script>
     <script type="module" src="./scripts/collect-answers.js"></script>
     <script type="module" src="./scripts/submit-answer.js"></script>
     <script type="module" src="./scripts/show-error-message.js"></script>
+    <script type="module" src="./scripts/start-game.js"></script>
 
 </head>
 <body>
+
+    <div id="login">
+        <h1>Quiz Engine</h1>
+        <p class="ui-error-message" hidden></p>
+        <div id="login-form">
+            <div>
+                <input id="game-id-input" type="text" placeholder="Game code...">
+                <input id="game-join-button" type="button" value="Join Game" onclick="joinGame($('#game-id-input').val())">
+            </div>
+            <div>
+                <input type="checkbox" id="join-as-hub"><label for="join-as-hub">Join as Projector</label>
+            </div>
+        </div>
+    </div>
 
     <div id="screen" class="flex-rows center-content">
 

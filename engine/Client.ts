@@ -15,4 +15,8 @@ export default class Client {
         this.joinDate = new Date();
     }
 
+    public emit(keyword:string, ...args:any) {
+        this.socket.emit(keyword,args);
+    }
+
 }

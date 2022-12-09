@@ -1,51 +1,109 @@
 import Hub from "./client-types/Hub";
 import Player from "./client-types/Player";
 import GameMode from "./gamemodes/GameMode";
+import GameParticipant from "./GameParticipant";
 
 export default class Game {
 
+    public readonly id:string;
     public readonly gamemode:GameMode;
     
-    private static readonly OLD_PLAYERS_MEM = 10;
+    private static readonly OLD_PLAYERS_MEM = 10; // How many Players that have left are stored
     public readonly oldPlayers:Array<Player> = []; // FIFO queue of Players that left (newest -> oldest)
     public readonly players:Array<Player> = []; // current Players
-    public readonly hub:Hub|undefined; // Hub showing "projector" screen
+    private hub:Hub|undefined; // Hub showing "projector" screen
 
-    constructor(gamemode:GameMode) {
+    constructor(id:string, gamemode:GameMode) {
+        this.id = id;
         this.gamemode = gamemode;
     }
 
     /**
-     * Adds a new Player to this Game.
-     * @param player Player that joins
+     * Adds a new Player or Hub to this Game.
+     * @param client Player or Hub that joins
      */
-    public connect(player:Player) {
-        this.players.push(player);
-        console.log(`PLayer ${player.id} joined the Game.`);
+    public connect(client:GameParticipant):boolean {
+        if (client instanceof Player) {
+            if (this.players.includes(client)) return false; // already in Game
+            else {
+                this.players.push(client);
+                console.log(`Player ${client.id} joined Game ${this.id}.`);
+        
+                client.currentScreen = this.gamemode.standardScreens.namePickScreen;
+    
+                this.onStateUpdated();
+                return true;
+            }
+        }
+        else if (client instanceof Hub) {
+            if (this.hub === undefined) {
+                this.hub = client;
+                console.log(`Hub ${client.id} joined Game ${this.id}.`);
 
-        player.currentScreen = this.gamemode.namePickScreen;
+                client.currentScreen = this.gamemode.standardScreens.lobbyScreen;
+
+                this.onStateUpdated();
+                return true;
+            }
+            else {
+                client.emit('show error message', this.gamemode.standardErrorMessages["setup/hub-already-present"]);
+                return false;
+            }
+        }
+        else return false;
         
     }
 
     /**
-     * Removes a Player from this Game.
-     * @param player Player that leaves
-     * @returns true if a Player was removed, false otherwise
+     * Removes a Player or Hub from this Game.
+     * @param client Player or Hub that leaves
+     * @returns true if a Player or Hub was removed, false otherwise
      */
-    public disconnect(player:Player) {
-        for (let i = 0; i < this.players.length; i ++) {
-            if (this.players[i] === player) {
-                this.oldPlayers.unshift(this.players.splice(i,1)[0]);
-                while (this.oldPlayers.length > Game.OLD_PLAYERS_MEM) this.oldPlayers.pop();
-
-                console.log(`Player ${player.id} left the Game.`);
+    public disconnect(client:GameParticipant):boolean {
+        if (client instanceof Player) {
+            for (let i = 0; i < this.players.length; i ++) {
+                if (this.players[i] === client) {
+                    this.oldPlayers.unshift(this.players.splice(i,1)[0]);
+                    while (this.oldPlayers.length > Game.OLD_PLAYERS_MEM) this.oldPlayers.pop();
+    
+                    console.log(`Player ${client.id} left Game ${this.id}.`);
+                    return true;
+                }
+            }
+    
+            console.log(`Warning: Player ${client.id} is not Game ${this.id}.`);
+            return false;
+        }
+        else if (client instanceof Hub) {
+            if (this.hub === client) {
+                console.log(`Hub ${client.id} left Game ${this.id}.`);
+                
+                this.hub = undefined;
                 return true;
             }
+            else return false;
         }
-
-        console.log(`Warning: Player ${player.id} is not in this Game.`);
-        return false;
+        else return false;
         
+    }
+
+    /**
+     * Attempts to start this Game.
+     * @returns true if game started, false otherwise
+     */
+    public attemptStart() {
+        if (this.players.length >= this.gamemode.settings.minPlayers && this.gamemode.canStart(this)) {
+            this.start();
+            return true;
+        }
+        else return false;
+    }
+
+    /**
+     * Starts this Game.
+     */
+    private start() {
+        // generate Questions
     }
 
     /**
@@ -54,7 +112,15 @@ export default class Game {
      * @returns true if not yet picked, false otherwise
      */
     public usenameAvailable(username:string) {
-        return !this.players.some(player => player.username === username);
+        if (this.gamemode.settings.allowDuplicateNames) return true;
+
+        return !this.players.some(player => {
+            if (this.gamemode.settings.ignoreNameCapitalization) {
+                return player.username?.toLocaleLowerCase() === username.toLocaleLowerCase();
+            }
+            else return player.username === username;
+        });
+
     }
 
     /**
@@ -68,6 +134,19 @@ export default class Game {
         }
 
         return undefined;
+    }
+
+    /**
+     * Function that is run when the state of this
+     * Game is updated.
+     */
+    public onStateUpdated() {
+        console.log('Update');
+        
+        // refresh Screen of hub and players
+        [this.hub, ...this.players].forEach(participant => {
+            participant?.refreshScreen();
+        });
     }
 
 }

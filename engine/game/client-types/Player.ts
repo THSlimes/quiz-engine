@@ -1,13 +1,9 @@
 import { Socket } from "socket.io";
-import Client from "../../Client";
-import HeaderUIComponent from "../../ui/components/HeaderUIComponent";
-import Screen from "../../ui/Screen";
 import Game from "../Game";
+import GameParticipant from "../GameParticipant";
 import Answer from "../questions/Answer";
 
-export default class Player extends Client {
-
-    public readonly game:Game; // Game this Player playing in
+export default class Player extends GameParticipant {
 
     public username:string|undefined;
     private _isSetUp = false;
@@ -18,25 +14,17 @@ export default class Player extends Client {
     public points = 0;
     public answer:Answer|undefined;
 
-    private _currentScreen:Screen|undefined; // Screen being currently displayed for the Player
-    set currentScreen(screen:Screen|undefined) {
-        this._currentScreen = screen;
-        this.socket.emit('draw screen', screen);        
-    }
-    get currentScreen() { return this._currentScreen; }
-
     constructor(socket:Socket, game:Game) {
-        super(socket);
-        this.game = game;
+        super(socket,game);
 
         // adding event handlers
-        socket.on('disconnect', () => this.game.disconnect(this)); // leaving Game on disconnect
-        socket.on('answer', answer => this.onAnswer(answer as Answer)); // submitting an answer
+        this.socket.on('disconnect', () => this.game.disconnect(this)); // leaving Game on disconnect
+        this.socket.on('answer', answer => this.onAnswer(answer as Answer)); // submitting an answer
     }
 
     private onAnswer(answer:Answer) {
         if (this.isSetUp) { // actual Answer to Question
-
+            // evaluate answer
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first
@@ -51,11 +39,11 @@ export default class Player extends Client {
                             
                         }
                         this.username = answer.name;
+                        this._isSetUp = true;
+                        this.game.onStateUpdated();
                         console.log(`Player ${this.id} chose name: ${answer.name}`);
 
-                        this.currentScreen = new Screen('test', [
-                            new HeaderUIComponent('Naam gekozen: ' + answer.name)
-                        ]);
+                        this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
                     }
                     else this.socket.emit('show error message', this.game.gamemode.standardErrorMessages["setup/duplicate-name-chosen"]); // feedback to player
                 }

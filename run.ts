@@ -6,4 +6,5 @@ import GameServer from './engine/GameServer';
 const server = new GameServer(CONFIG.serverConfig);
 server.start();
 
-server.openGame(new Game(BASIC_GAMEMODE));
+const id = server.createGame(BASIC_GAMEMODE);
+console.log(`Started Game with id ${id}`);

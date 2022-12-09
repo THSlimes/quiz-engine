@@ -1,11 +1,14 @@
 import './lib/jquery.js';
-import { socket } from './socket-io-connect.js';
+import socket from './socket-io-connect.js';
 import { allAnswered } from './collect-answers.js';
 
 socket.on('draw screen', renderScreen);
 
 export var currentScreen = undefined;
 export function renderScreen(screen) {
+    if (screen === undefined) $('#login').fadeIn();
+    else $('#login').fadeOut();
+
     console.log('Drawing screen: ' + screen.name);
     
     const screenDiv = $('div#screen');

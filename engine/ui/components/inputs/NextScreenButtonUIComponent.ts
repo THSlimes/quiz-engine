@@ -20,7 +20,9 @@ export default class NextScreenButtonUIComponent implements TextUIComponent, Inp
 
         this.html = `<input
                         class="ui-component ${NextScreenButtonUIComponent.CLASS_NAME}"
-                        type=button value="${text}"
+                        type="button"
+                        name="${fieldName}"
+                        value="${text}"
                         ${requiresAnswers?'disabled':''}
                         onclick="nextScreen(); ${submitAnswer?'submitAnswer();':''}"
                     >`;

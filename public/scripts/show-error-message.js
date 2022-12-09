@@ -1,5 +1,5 @@
 import './lib/jquery.js';
-import { socket } from './socket-io-connect.js';
+import socket from './socket-io-connect.js';
 
 socket.on('show error message', showErrorMessage);
 

@@ -2,6 +2,6 @@ body {
     padding:0px;
     margin: 0px;
 
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden;
 }
