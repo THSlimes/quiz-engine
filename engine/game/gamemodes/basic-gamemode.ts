@@ -1,7 +1,9 @@
 import DivUIComponent from "../../ui/components/DivUIComponent";
 import ErrorMessageUIComponent from "../../ui/components/ErrorMessageUIComponent";
 import HeaderUIComponent from "../../ui/components/HeaderUIComponent";
+import MultiSelectUIComponent from "../../ui/components/inputs/MultiSelectUIComponent";
 import NextScreenButtonUIComponent from "../../ui/components/inputs/NextScreenButtonUIComponent";
+import SelectUIComponent from "../../ui/components/inputs/SelectUIComponent";
 import StartGameButtonUIComponent from "../../ui/components/inputs/StartGameButtonUIComponent";
 import TextInputUIComponent from "../../ui/components/inputs/TextInputUIComponent";
 import ContainerType from "../../ui/ContainerType";
@@ -61,9 +63,44 @@ const BASIC_GAMEMODE:Gamemode = {
 
     },
 
+    standardEvents: {
+        onGameStart(game) {
+            
+        },
+
+        onNextQuestion(question) {
+            if (question === undefined) console.log('No next Question');
+            else {
+            }
+        },
+    },
+
     canStart(game) {
         return game.players.every(player => player.isSetUp);
     },
+
+    canContinue(game) {
+        return game.players.every(player => player.answer !== undefined);
+    },
+
+    generateQuestions(game) {
+        return [
+            {
+                hubScreen: new Screen('question 1', [
+                    new HeaderUIComponent('What is the correct answer?'),
+                ]),
+                playerScreen: new Screen('question 1', [
+                    new HeaderUIComponent('Choose the correct answer.'),
+                    new MultiSelectUIComponent('answer', ['correct', 'incorrect'], ContainerType.CENTERED_ROWS, 1, 1),
+                    new NextScreenButtonUIComponent('next screen', 'Confirm', true, true)
+                ]),
+                eval(answer) {
+                    if (answer.answer === 'correct') return 100;
+                    else return -100;
+                }
+            }
+        ];
+    }
     
 };
 

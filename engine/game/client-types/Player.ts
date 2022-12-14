@@ -25,6 +25,12 @@ export default class Player extends GameParticipant {
     private onAnswer(answer:Answer) {
         if (this.isSetUp) { // actual Answer to Question
             // evaluate answer
+            this.points += this.game.currentQuestion!.eval(answer);
+            this.answer = answer;
+            console.log(`${this.username} of Game ${this.game.id} answered.`);
+
+            this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
+            this.game.onStateUpdated();
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first

@@ -2,6 +2,7 @@ import Hub from "./client-types/Hub";
 import Player from "./client-types/Player";
 import GameMode from "./gamemodes/GameMode";
 import GameParticipant from "./GameParticipant";
+import Question from "./questions/Questions";
 
 export default class Game {
 
@@ -12,6 +13,15 @@ export default class Game {
     public readonly oldPlayers:Array<Player> = []; // FIFO queue of Players that left (newest -> oldest)
     public readonly players:Array<Player> = []; // current Players
     private hub:Hub|undefined; // Hub showing "projector" screen
+
+    private questions:Array<Question>|undefined;
+    private cqi = -1; // Current Question Index
+    public get currentQuestion() { return this.questions === undefined ? undefined : this.questions[this.cqi]; }
+    /**
+     * Gives the next Question.
+     * @returns the next Question (undefined if not available)
+     */
+    public nextQuestion() { return this.questions ? this.questions[++this.cqi] : undefined }
 
     constructor(id:string, gamemode:GameMode) {
         this.id = id;
@@ -67,6 +77,7 @@ export default class Game {
                     while (this.oldPlayers.length > Game.OLD_PLAYERS_MEM) this.oldPlayers.pop();
     
                     console.log(`Player ${client.id} left Game ${this.id}.`);
+                    this.onStateUpdated();
                     return true;
                 }
             }
@@ -79,6 +90,7 @@ export default class Game {
                 console.log(`Hub ${client.id} left Game ${this.id}.`);
                 
                 this.hub = undefined;
+                this.onStateUpdated();
                 return true;
             }
             else return false;
@@ -104,6 +116,33 @@ export default class Game {
      */
     private start() {
         // generate Questions
+        this.questions = this.gamemode.generateQuestions(this);
+
+        // event
+        this.gamemode.standardEvents.onGameStart(this);
+
+        // prompt first Question
+        this.showNextQuestion();
+
+        // event
+        this.onStateUpdated();
+    }
+    
+    private showNextQuestion() {
+        const question = this.nextQuestion();
+        if (question === undefined) console.log('No more questions');
+        else {
+            // show screens
+            this.hub!.currentScreen = question.hubScreen;
+            this.players.forEach(player => {
+                player.answer = undefined;
+                player.currentScreen = question.playerScreen;
+            });
+
+            // event
+            this.gamemode.standardEvents.onNextQuestion(this.currentQuestion);
+        }
+
     }
 
     /**
@@ -147,6 +186,8 @@ export default class Game {
         [this.hub, ...this.players].forEach(participant => {
             participant?.refreshScreen();
         });
+
+        if (this.gamemode.canContinue(this)) this.showNextQuestion();
     }
 
 }

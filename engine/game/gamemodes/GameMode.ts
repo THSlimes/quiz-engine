@@ -6,8 +6,20 @@ export default interface Gamemode {
 
     readonly name:string,
     
-    readonly standardErrorMessages:StandardErrorMessages;
+    /**
+     * Specifies standardised error messages that are
+     * shows to the GameParticipants.
+     */
+    readonly standardErrorMessages: {
+        'setup/duplicate-name-chosen':string,
+        'setup/hub-already-present':string,
+        'setup/cannot-start-game':string
+    };
 
+    /**
+     * Specifies settings that are common amongst
+     * different Gamemodes
+     */
     settings: {
         minPlayers: number,
         maxPlayers: number,
@@ -15,6 +27,9 @@ export default interface Gamemode {
         ignoreNameCapitalization: boolean
     }
 
+    /**
+     * Species certain Screens that every GameMode uses.
+     */
     standardScreens: {
         /**
          * Screen where a Player can choose their name.
@@ -34,31 +49,35 @@ export default interface Gamemode {
     }
 
     /**
+     * Eventhandlers for standard Game behaviours, such
+     * as starting and ending.
+     */
+    standardEvents: {
+        onGameStart(game:Game):void,
+        onNextQuestion(question:Question|undefined):void
+    }
+
+    /**
      * Determines whether the Game can start being played.
      * @param game the Game
      * @returns true if Game can start, false otherwise
      */
     canStart:(game:Game) => boolean;
 
-    // /**
-    //  * Determines wheter the Game can continue on to the next question.
-    //  * @param game the Game
-    //  * @returns true if Hame can continue, false otherwise
-    //  */
-    // canContinue:(game:Game) => boolean,
+    /**
+     * Determines wheter the Game can continue on to the next Question.
+     * @param game the Game
+     * @returns true if Game can continue, false otherwise
+     */
+    canContinue:(game:Game) => boolean,
 
-    // /**
-    //  * Generates Questions for a Game.
-    //  * @param game the Game
-    //  * @returns list of Questions for the Game
-    //  */
-    // generateQuestions:(game:Game) => Array<Question>,
+    /**
+     * Generates Questions for a Game.
+     * @param game the Game
+     * @returns list of Questions for the Game
+     */
+    generateQuestions:(game:Game) => Array<Question>,
 
-    // /**
-    //  * Determines what should be done when the next Question is prompted.
-    //  * @param question Question being prompted
-    //  */
-    // onNextQuestion:(question:Question) => void
 }
 
 /**
@@ -67,13 +86,3 @@ export default interface Gamemode {
  * change as well.
  */
 export type RefreshableScreen = (game:Game) => Screen;
-
-/**
- * The StandardErrorMessages interface specified the error messages
- * that are used by default.
- */
-interface StandardErrorMessages {
-    'setup/duplicate-name-chosen':string,
-    'setup/hub-already-present':string,
-    'setup/cannot-start-game':string
-}

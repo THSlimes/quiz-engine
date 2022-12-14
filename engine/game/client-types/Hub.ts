@@ -15,8 +15,9 @@ export default class Hub extends GameParticipant {
     }
 
     private startGame() {
-        if (this.game.attemptStart()) this.currentScreen = new Screen('game started', [new HeaderUIComponent('starting game')]);
-        else this.socket.emit('show error message', this.game.gamemode.standardErrorMessages["setup/cannot-start-game"]);
+        if (!this.game.attemptStart()) {
+            this.socket.emit('show error message', this.game.gamemode.standardErrorMessages["setup/cannot-start-game"]);
+        }
     }
 
 }
