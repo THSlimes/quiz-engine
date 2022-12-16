@@ -69,10 +69,15 @@ const BASIC_GAMEMODE:Gamemode = {
         },
 
         onNextQuestion(question) {
-            if (question === undefined) console.log('No next Question');
-            else {
-            }
         },
+
+        onQuestionFinish(game) {
+            game.onNextQuestion();
+        },
+
+        onGameFinish(game) {
+            
+        }
     },
 
     canStart(game) {

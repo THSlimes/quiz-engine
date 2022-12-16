@@ -54,7 +54,9 @@ export default interface Gamemode {
      */
     standardEvents: {
         onGameStart(game:Game):void,
-        onNextQuestion(question:Question|undefined):void
+        onNextQuestion(question:Question):void,
+        onQuestionFinish(game:Game):void,
+        onGameFinish(game:Game):void
     }
 
     /**

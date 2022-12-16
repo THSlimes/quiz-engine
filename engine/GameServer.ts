@@ -32,7 +32,6 @@ export default class GameServer {
     private static readonly ID_LENGTH = 4;
 
     private games:GameLibrary = {};
-    private gamePassword = "PASSWORD"; // TODO: change implementation
 
     public constructor(config:ServerConfig) {
         this.config = config;

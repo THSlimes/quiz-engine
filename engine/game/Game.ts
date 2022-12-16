@@ -138,7 +138,9 @@ export default class Game {
      */
     public onNextQuestion() {
         const question = this.nextQuestion();
-        if (question === undefined) console.log('No more questions');
+        if (question === undefined) { // no more Questions
+            this.onGameFinish();
+        }
         else {
             // show screens
             this.hub!.currentScreen = question.hubScreen;
@@ -147,17 +149,26 @@ export default class Game {
                 player.currentScreen = question.playerScreen;
             });
 
-            // event
-            this.gamemode.standardEvents.onNextQuestion(this.currentQuestion);
+            this.gamemode.standardEvents.onNextQuestion(question); // event hook
         }
 
     }
 
     /**
-     * This method is called when the current question is done.
+     * This method is called when the current Question is done.
      */
     public onQuestionFinish() {
-        this.onNextQuestion();
+        this.players.sort((a, b) => b.points-a.points); // sort Players by points
+        this.gamemode.standardEvents.onQuestionFinish(this);
+    }
+
+    /**
+     * This method is called when there are no more Questions left.
+     */
+    public onGameFinish() {
+        console.log(`Game ${this.id} finished.`);
+        this.players.sort((a, b) => b.points-a.points); // sort Players by points
+        this.gamemode.standardEvents.onGameFinish(this);
     }
 
     /**
