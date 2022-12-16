@@ -79,6 +79,11 @@ export default class GameServer {
         else throw new Error('Server is not running.');
     }
 
+    /**
+     * This method is run whenever a new Socket connection
+     * is established.
+     * @param socket Socket that disconnected
+     */
     private onConnect(socket:Socket) {
         const client = new Client(socket);
         socket.on('disconnect', (reason) => this.onDisconnect(client, reason));
@@ -103,6 +108,11 @@ export default class GameServer {
 
     }
 
+    /**
+     * This method is run when a Client disconnects.
+     * @param client Client that disconnected
+     * @param reason reason for disconnecting
+     */
     private onDisconnect(client:Client, reason:string) {
         for (let i = 0; i < this.clients.length; i ++) {
             if (this.clients[i] === client) {
@@ -114,6 +124,11 @@ export default class GameServer {
         console.log(`Client ${client.id} disconnected: ${reason}. (${this.clients.length} left)`);
     }
 
+    /**
+     * Creates and registers a new Game on this GameServer.
+     * @param gamemode Gamemode the Game uses
+     * @returns 
+     */
     public createGame(gamemode:Gamemode):string {
         // generate id
         let id;
@@ -132,6 +147,9 @@ export default class GameServer {
 
 }
 
+/**
+ * A GameLibrary maps game codes/ids to the Game objects.
+ */
 interface GameLibrary {
     [key: string]: Game
 }

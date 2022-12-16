@@ -14,6 +14,11 @@ export default class Player extends GameParticipant {
     public points = 0;
     public answer:Answer|undefined;
 
+    /**
+     * Creates a new Player in the context of a Game.
+     * @param socket Socket the Player is connected through
+     * @param game the Game the Player belongs to
+     */
     constructor(socket:Socket, game:Game) {
         super(socket,game);
 
@@ -22,6 +27,10 @@ export default class Player extends GameParticipant {
         this.socket.on('answer', answer => this.onAnswer(answer as Answer)); // submitting an answer
     }
 
+    /**
+     * Method that is called when the Player submits an Answer.
+     * @param answer Player's Answer
+     */
     private onAnswer(answer:Answer) {
         if (this.isSetUp) { // actual Answer to Question
             // evaluate answer
@@ -30,7 +39,7 @@ export default class Player extends GameParticipant {
             console.log(`${this.username} of Game ${this.game.id} answered.`);
 
             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
-            
+
             this.game.onStateUpdated();
             if (this.game.gamemode.questionFinished(this.game)) this.game.onQuestionFinish();
         }

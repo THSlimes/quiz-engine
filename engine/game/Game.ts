@@ -23,6 +23,11 @@ export default class Game {
      */
     public nextQuestion() { return this.questions ? this.questions[++this.cqi] : undefined }
 
+    /**
+     * Creates a new Game object.
+     * @param id code/id of the Game
+     * @param gamemode Gamemode to be played
+     */
     constructor(id:string, gamemode:GameMode) {
         this.id = id;
         this.gamemode = gamemode;
@@ -128,6 +133,9 @@ export default class Game {
         this.onStateUpdated();
     }
     
+    /**
+     * This method prompts the next Question to the Players.
+     */
     public onNextQuestion() {
         const question = this.nextQuestion();
         if (question === undefined) console.log('No more questions');
@@ -145,6 +153,9 @@ export default class Game {
 
     }
 
+    /**
+     * This method is called when the current question is done.
+     */
     public onQuestionFinish() {
         this.onNextQuestion();
     }
