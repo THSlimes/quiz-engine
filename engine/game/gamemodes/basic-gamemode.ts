@@ -79,7 +79,7 @@ const BASIC_GAMEMODE:Gamemode = {
         return game.players.every(player => player.isSetUp);
     },
 
-    canContinue(game) {
+    questionFinished(game) {
         return game.players.every(player => player.answer !== undefined);
     },
 

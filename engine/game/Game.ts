@@ -122,13 +122,13 @@ export default class Game {
         this.gamemode.standardEvents.onGameStart(this);
 
         // prompt first Question
-        this.showNextQuestion();
+        this.onNextQuestion();
 
         // event
         this.onStateUpdated();
     }
     
-    private showNextQuestion() {
+    public onNextQuestion() {
         const question = this.nextQuestion();
         if (question === undefined) console.log('No more questions');
         else {
@@ -143,6 +143,10 @@ export default class Game {
             this.gamemode.standardEvents.onNextQuestion(this.currentQuestion);
         }
 
+    }
+
+    public onQuestionFinish() {
+        this.onNextQuestion();
     }
 
     /**
@@ -186,8 +190,6 @@ export default class Game {
         [this.hub, ...this.players].forEach(participant => {
             participant?.refreshScreen();
         });
-
-        if (this.gamemode.canContinue(this)) this.showNextQuestion();
     }
 
 }

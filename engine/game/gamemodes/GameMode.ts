@@ -69,7 +69,7 @@ export default interface Gamemode {
      * @param game the Game
      * @returns true if Game can continue, false otherwise
      */
-    canContinue:(game:Game) => boolean,
+    questionFinished:(game:Game) => boolean,
 
     /**
      * Generates Questions for a Game.

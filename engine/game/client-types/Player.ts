@@ -30,7 +30,9 @@ export default class Player extends GameParticipant {
             console.log(`${this.username} of Game ${this.game.id} answered.`);
 
             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
+            
             this.game.onStateUpdated();
+            if (this.game.gamemode.questionFinished(this.game)) this.game.onQuestionFinish();
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first
