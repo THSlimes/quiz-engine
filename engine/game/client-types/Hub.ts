@@ -13,7 +13,7 @@ export default class Hub extends GameParticipant {
     }
 
     private startGame() {
-        if (!this.game.attemptStart()) {
+        if (!this.game.doAttemptStart()) {
             this.socket.emit('show error message', this.game.gamemode.standardErrorMessages["setup/cannot-start-game"]);
         }
     }

@@ -5,7 +5,7 @@ import UIComponent from "./components/UIComponent";
 
 export class StaticScreen extends ContainerUIComponent {
 
-    constructor(components:Array<UIComponent>) {
+    constructor(...components:Array<UIComponent>) {
         super('div','screen',components,ContainerType.CENTERED_ROWS);
     }
 

@@ -23,39 +23,65 @@ const BASIC_GAMEMODE:Gamemode = {
         minPlayers: 1,
         maxPlayers: Infinity,
         allowDuplicateNames: false,
-        ignoreNameCapitalization: true
+        ignoreNameCapitalization: true,
+
+        showIntermediateResults(game) {
+            return game.questionNumber % 5 === 0;
+        },
+
+        canStart(game) {
+            return game.players.every(player => player.isSetUp);
+        },
+
+        questionFinished(game) {
+            return game.players.every(player => player.answer !== undefined);
+        }
     },
 
     standardScreens: {
 
         namePickScreen: new StaticScreen(
-            [
-                new Header('Choose a name.', 1),
-                new TextInput('name','Name...'),
-                new ErrorMessageBox(),
-                new NextScreenButton("Confirm", true, true)
-            ]
+            new Header('Choose a name.', 1),
+            new TextInput('name','Name...'),
+            new ErrorMessageBox(),
+            new NextScreenButton("Confirm", true, true)
         ),
 
         waitingScreen: new StaticScreen(
-            [
-                new Header('Waiting...')
-            ]
+            new Header('Waiting...')
         ),
 
         lobbyScreen(game) {
             return new StaticScreen(
-                [
-                    new Header('Waiting for Players...', 1),
-                    new Division(
-                        game.players.filter(p=>p.username!==undefined).map(p => new Header(p.username as string),1),
-                        ContainerType.CENTERED_COLUMNS
-                    ),
-                    new ErrorMessageBox(),
-                    new StartGameButton('start game', 'Start Game')
-                ]
+                new Header('Waiting for Players...', 1),
+                new Division(
+                    game.players.filter(p=>p.username!==undefined).map(p => new Header(p.username as string),1),
+                    ContainerType.CENTERED_COLUMNS
+                ),
+                new ErrorMessageBox(),
+                new StartGameButton('start game', 'Start Game')
             );
         },
+
+        intermediateResultsScreen(game) {
+            return new StaticScreen(
+                new Header('Intermediate Results'),
+                new Division(
+                    game.players.map((player, ind) => new Header(`${ind+1}. ${player.username}`)),
+                    ContainerType.CENTERED_ROWS
+                )
+            );
+        },
+
+        finalResultsScreen(game) {
+            return new StaticScreen(
+                new Header('Final Results'),
+                new Division(
+                    game.players.map((player, ind) => new Header(`${ind+1}. ${player.username}`)),
+                    ContainerType.CENTERED_ROWS
+                )
+            );
+        }
 
     },
 
@@ -64,37 +90,33 @@ const BASIC_GAMEMODE:Gamemode = {
             
         },
 
-        onNextQuestion(question) {
+        onNewQuestion(question) {
         },
 
-        onQuestionFinish(game) {
-            game.onNextQuestion();
+        onQuestionEnds(game, question) {
+            game.doNextQuestion();
         },
 
-        onGameFinish(game) {
+        onIntermediateResults(game) {
+
+        },
+
+        onFinalResults(game) {
             
         }
-    },
-
-    canStart(game) {
-        return game.players.every(player => player.isSetUp);
-    },
-
-    questionFinished(game) {
-        return game.players.every(player => player.answer !== undefined);
     },
 
     generateQuestions(game) {
         return [
             {
-                hubScreen: new StaticScreen([
+                hubScreen: new StaticScreen(
                     new Header('What is the correct answer?'),
-                ]),
-                playerScreen: new StaticScreen([
+                ),
+                playerScreen: new StaticScreen(
                     new Header('Choose the correct answer.'),
                     new MultiSelectInput('answer', ['correct', 'incorrect'], 1, 1),
                     new NextScreenButton('Confirm', true, true)
-                ]),
+                ),
                 eval(answer) {
                     if (answer.answer === 'correct') return 100;
                     else return -100;

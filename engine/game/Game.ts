@@ -16,6 +16,7 @@ export default class Game {
 
     private questions:Array<Question>|undefined;
     private cqi = -1; // Current Question Index
+    public get questionNumber() { return this.cqi+1; }
     public get currentQuestion() { return this.questions === undefined ? undefined : this.questions[this.cqi]; }
     /**
      * Gives the next Question.
@@ -46,7 +47,7 @@ export default class Game {
         
                 client.currentScreen = this.gamemode.standardScreens.namePickScreen;
     
-                this.onStateUpdated();
+                this.hub?.refreshScreen();
                 return true;
             }
         }
@@ -57,7 +58,7 @@ export default class Game {
 
                 client.currentScreen = this.gamemode.standardScreens.lobbyScreen;
 
-                this.onStateUpdated();
+                this.hub.refreshScreen();
                 return true;
             }
             else {
@@ -82,7 +83,7 @@ export default class Game {
                     while (this.oldPlayers.length > Game.OLD_PLAYERS_MEM) this.oldPlayers.pop();
     
                     console.log(`Player ${client.id} left Game ${this.id}.`);
-                    this.onStateUpdated();
+                    this.hub?.refreshScreen();
                     return true;
                 }
             }
@@ -95,7 +96,6 @@ export default class Game {
                 console.log(`Hub ${client.id} left Game ${this.id}.`);
                 
                 this.hub = undefined;
-                this.onStateUpdated();
                 return true;
             }
             else return false;
@@ -108,9 +108,9 @@ export default class Game {
      * Attempts to start this Game.
      * @returns true if game started, false otherwise
      */
-    public attemptStart() {
-        if (this.players.length >= this.gamemode.settings.minPlayers && this.gamemode.canStart(this)) {
-            this.start();
+    public doAttemptStart() {
+        if (this.players.length >= this.gamemode.settings.minPlayers && this.gamemode.settings.canStart(this)) {
+            this.doStart();
             return true;
         }
         else return false;
@@ -119,27 +119,21 @@ export default class Game {
     /**
      * Starts this Game.
      */
-    private start() {
-        // generate Questions
-        this.questions = this.gamemode.generateQuestions(this);
+    private doStart() {
+        this.questions = this.gamemode.generateQuestions(this); // generate Questions
 
-        // event
-        this.gamemode.standardEvents.onGameStart(this);
+        this.gamemode.standardEvents.onGameStart(this); // event
 
-        // prompt first Question
-        this.onNextQuestion();
-
-        // event
-        this.onStateUpdated();
+        this.doNextQuestion(); // prompt first Question
     }
     
     /**
      * This method prompts the next Question to the Players.
      */
-    public onNextQuestion() {
+    public doNextQuestion() {
         const question = this.nextQuestion();
         if (question === undefined) { // no more Questions
-            this.onGameFinish();
+            this.doFinalResults();
         }
         else {
             // show screens
@@ -149,7 +143,7 @@ export default class Game {
                 player.currentScreen = question.playerScreen;
             });
 
-            this.gamemode.standardEvents.onNextQuestion(question); // event hook
+            this.gamemode.standardEvents.onNewQuestion(question); // event hook
         }
 
     }
@@ -157,18 +151,37 @@ export default class Game {
     /**
      * This method is called when the current Question is done.
      */
-    public onQuestionFinish() {
+    public doEndQuestion() {
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
-        this.gamemode.standardEvents.onQuestionFinish(this);
+        this.gamemode.standardEvents.onQuestionEnds(this, this.currentQuestion as Question);
+
+        if (this.currentQuestion === this.questions?.at(-1)) { // last Question ended -> end Game
+            this.doFinalResults();
+        }
+        else if (this.gamemode.settings.showIntermediateResults(this)) { // Gamemode wants to show intermediate results
+            this.doIntermediateResults();
+        }
+        else this.doNextQuestion(); // prompt next Question
     }
 
     /**
-     * This method is called when there are no more Questions left.
+     * This method shows the intermediate results.
      */
-    public onGameFinish() {
+    public doIntermediateResults() {
         console.log(`Game ${this.id} finished.`);
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
-        this.gamemode.standardEvents.onGameFinish(this);
+
+        this.gamemode.standardEvents.onIntermediateResults(this);
+    }
+
+    /**
+     * This method is called when there are no more Questions left, showing the final results.
+     */
+    public doFinalResults() {
+        console.log(`Game ${this.id} finished.`);
+        this.players.sort((a, b) => b.points-a.points); // sort Players by points
+
+        this.gamemode.standardEvents.onFinalResults(this);
     }
 
     /**
@@ -176,7 +189,7 @@ export default class Game {
      * @param name suggested name
      * @returns true if not yet picked, false otherwise
      */
-    public usenameAvailable(username:string) {
+    public isUsernameAvailable(username:string) {
         if (this.gamemode.settings.allowDuplicateNames) return true;
 
         return !this.players.some(player => {
@@ -199,19 +212,6 @@ export default class Game {
         }
 
         return undefined;
-    }
-
-    /**
-     * Function that is run when the state of this
-     * Game is updated.
-     */
-    public onStateUpdated() {
-        console.log('Update');
-        
-        // refresh Screen of hub and players
-        [this.hub, ...this.players].forEach(participant => {
-            participant?.refreshScreen();
-        });
     }
 
 }

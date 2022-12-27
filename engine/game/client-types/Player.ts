@@ -41,14 +41,14 @@ export default class Player extends GameParticipant {
             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
 
             this.game.onStateUpdated();
-            if (this.game.gamemode.questionFinished(this.game)) this.game.onQuestionFinish();
+            if (this.game.gamemode.settings.questionFinished(this.game)) this.game.doEndQuestion();
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first
                 if ('name' in answer && typeof answer.name === 'string') {
                     answer.name = answer.name.trim();
 
-                    if (this.game.usenameAvailable(answer.name)) {
+                    if (this.game.isUsernameAvailable(answer.name)) {
                         let oldMe = this.game.getOldPlayer(answer.name);
                         if (oldMe !== undefined) {
                             this.copy(oldMe); // copy old Player data

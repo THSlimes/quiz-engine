@@ -7,7 +7,7 @@ export default interface Gamemode {
     readonly name:string,
     
     /**
-     * Specifies standardised error messages that are
+     * Specifies standardized error messages that are
      * shows to the GameParticipants.
      */
     readonly standardErrorMessages: {
@@ -24,7 +24,23 @@ export default interface Gamemode {
         minPlayers: number,
         maxPlayers: number,
         allowDuplicateNames: boolean,
-        ignoreNameCapitalization: boolean
+        ignoreNameCapitalization: boolean,
+
+        showIntermediateResults:(game:Game) => boolean,
+
+        /**
+         * Determines whether the Game can start being played.
+         * @param game the Game
+         * @returns true if Game can start, false otherwise
+         */
+        canStart:(game:Game) => boolean;
+
+        /**
+         * Determines whether the Game can continue on to the next Question.
+         * @param game the Game
+         * @returns true if Game can continue, false otherwise
+         */
+        questionFinished:(game:Game) => boolean
     }
 
     /**
@@ -46,6 +62,16 @@ export default interface Gamemode {
          */
         readonly lobbyScreen:Screen;
 
+        /**
+         * The Screen that shows the intermediate results of an ongoing Game.
+         */
+        readonly intermediateResultsScreen:Screen;
+
+        /**
+         * The Screen that is shown when after Questions have finished.
+         */
+        readonly finalResultsScreen:Screen;
+
     }
 
     /**
@@ -54,24 +80,11 @@ export default interface Gamemode {
      */
     standardEvents: {
         onGameStart(game:Game):void,
-        onNextQuestion(question:Question):void,
-        onQuestionFinish(game:Game):void,
-        onGameFinish(game:Game):void
+        onNewQuestion(question:Question):void,
+        onQuestionEnds(game:Game, question:Question):void,
+        onIntermediateResults(game:Game):void,
+        onFinalResults(game:Game):void
     }
-
-    /**
-     * Determines whether the Game can start being played.
-     * @param game the Game
-     * @returns true if Game can start, false otherwise
-     */
-    canStart:(game:Game) => boolean;
-
-    /**
-     * Determines wheter the Game can continue on to the next Question.
-     * @param game the Game
-     * @returns true if Game can continue, false otherwise
-     */
-    questionFinished:(game:Game) => boolean,
 
     /**
      * Generates Questions for a Game.
