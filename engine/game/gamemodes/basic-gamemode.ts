@@ -33,7 +33,7 @@ const BASIC_GAMEMODE:Gamemode = {
             return game.players.every(player => player.isSetUp);
         },
 
-        questionFinished(game) {
+        canEndQuestion(game) {
             return game.players.every(player => player.answer !== undefined);
         }
     },
@@ -41,6 +41,8 @@ const BASIC_GAMEMODE:Gamemode = {
     standardScreens: {
 
         namePickScreen: new StaticScreen(
+            false,
+            
             new Header('Choose a name.', 1),
             new TextInput('name','Name...'),
             new ErrorMessageBox(),
@@ -48,11 +50,15 @@ const BASIC_GAMEMODE:Gamemode = {
         ),
 
         waitingScreen: new StaticScreen(
+            false,
+            
             new Header('Waiting...')
         ),
 
         lobbyScreen(game) {
             return new StaticScreen(
+                false,
+                
                 new Header('Waiting for Players...', 1),
                 new Division(
                     game.players.filter(p=>p.username!==undefined).map(p => new Header(p.username as string),1),
@@ -65,6 +71,8 @@ const BASIC_GAMEMODE:Gamemode = {
 
         intermediateResultsScreen(game) {
             return new StaticScreen(
+                false,
+                
                 new Header('Intermediate Results'),
                 new Division(
                     game.players.map((player, ind) => new Header(`${ind+1}. ${player.username}`)),
@@ -75,9 +83,11 @@ const BASIC_GAMEMODE:Gamemode = {
 
         finalResultsScreen(game) {
             return new StaticScreen(
+                false,
+                
                 new Header('Final Results'),
                 new Division(
-                    game.players.map((player, ind) => new Header(`${ind+1}. ${player.username}`)),
+                    game.players.map((player, ind) => new Header(`${ind+1}. ${player.username} - ${player.points} pts.`)),
                     ContainerType.CENTERED_ROWS
                 )
             );
@@ -94,7 +104,6 @@ const BASIC_GAMEMODE:Gamemode = {
         },
 
         onQuestionEnds(game, question) {
-            game.doNextQuestion();
         },
 
         onIntermediateResults(game) {
@@ -110,9 +119,13 @@ const BASIC_GAMEMODE:Gamemode = {
         return [
             {
                 hubScreen: new StaticScreen(
+                    false,
+                    
                     new Header('What is the correct answer?'),
                 ),
                 playerScreen: new StaticScreen(
+                    true,
+                    
                     new Header('Choose the correct answer.'),
                     new MultiSelectInput('answer', ['correct', 'incorrect'], 1, 1),
                     new NextScreenButton('Confirm', true, true)

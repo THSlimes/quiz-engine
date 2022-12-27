@@ -89,6 +89,7 @@ export default class Game {
             }
     
             console.log(`Warning: Player ${client.id} is not Game ${this.id}.`);
+            
             return false;
         }
         else if (client instanceof Hub) {
@@ -132,10 +133,7 @@ export default class Game {
      */
     public doNextQuestion() {
         const question = this.nextQuestion();
-        if (question === undefined) { // no more Questions
-            this.doFinalResults();
-        }
-        else {
+        if (question !== undefined) {
             // show screens
             this.hub!.currentScreen = question.hubScreen;
             this.players.forEach(player => {
@@ -145,6 +143,7 @@ export default class Game {
 
             this.gamemode.standardEvents.onNewQuestion(question); // event hook
         }
+        else console.log(`WARNING: Game ${this.id} attempted to use an undefined Question.`);
 
     }
 
@@ -155,7 +154,12 @@ export default class Game {
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
         this.gamemode.standardEvents.onQuestionEnds(this, this.currentQuestion as Question);
 
-        if (this.currentQuestion === this.questions?.at(-1)) { // last Question ended -> end Game
+        console.log(this.questionNumber);
+        console.log(this.questions?.length);
+        
+        
+
+        if (this.questionNumber >= (this.questions?.length??0)) { // last Question ended -> end Game
             this.doFinalResults();
         }
         else if (this.gamemode.settings.showIntermediateResults(this)) { // Gamemode wants to show intermediate results
@@ -168,20 +172,23 @@ export default class Game {
      * This method shows the intermediate results.
      */
     public doIntermediateResults() {
-        console.log(`Game ${this.id} finished.`);
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
 
         this.gamemode.standardEvents.onIntermediateResults(this);
+
+        this.hub!.currentScreen = this.gamemode.standardScreens.intermediateResultsScreen(this); // show Screen
     }
 
     /**
      * This method is called when there are no more Questions left, showing the final results.
      */
     public doFinalResults() {
-        console.log(`Game ${this.id} finished.`);
+        console.trace(`Game ${this.id} ended.`);
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
 
         this.gamemode.standardEvents.onFinalResults(this);
+
+        this.hub!.currentScreen = this.gamemode.standardScreens.finalResultsScreen(this); // show Screen
     }
 
     /**
@@ -212,6 +219,13 @@ export default class Game {
         }
 
         return undefined;
+    }
+
+    /**
+     * Refreshes the Screens of every GameParticipant (Players and Hub) of this Game.
+     */
+    public refreshParticipantScreens() {
+        [...this.players, this.hub].forEach(gp => gp?.refreshScreen());
     }
 
 }

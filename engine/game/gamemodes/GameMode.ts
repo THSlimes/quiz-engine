@@ -1,9 +1,12 @@
-import Screen from "../../ui/Screen";
+import Screen, { RefreshableScreen } from "../../ui/Screen";
 import Game from "../Game";
 import Question from "../questions/Questions";
 
 export default interface Gamemode {
 
+    /**
+     * Name of this Gamemode
+     */
     readonly name:string,
     
     /**
@@ -40,7 +43,7 @@ export default interface Gamemode {
          * @param game the Game
          * @returns true if Game can continue, false otherwise
          */
-        questionFinished:(game:Game) => boolean
+        canEndQuestion:(game:Game) => boolean
     }
 
     /**
@@ -60,17 +63,17 @@ export default interface Gamemode {
         /**
          * The Screen that is shown on the Hub before the Game starts.
          */
-        readonly lobbyScreen:Screen;
+        readonly lobbyScreen:RefreshableScreen;
 
         /**
          * The Screen that shows the intermediate results of an ongoing Game.
          */
-        readonly intermediateResultsScreen:Screen;
+        readonly intermediateResultsScreen:RefreshableScreen;
 
         /**
          * The Screen that is shown when after Questions have finished.
          */
-        readonly finalResultsScreen:Screen;
+        readonly finalResultsScreen:RefreshableScreen;
 
     }
 

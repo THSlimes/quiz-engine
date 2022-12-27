@@ -36,12 +36,12 @@ export default class Player extends GameParticipant {
             // evaluate answer
             this.points += this.game.currentQuestion!.eval(answer);
             this.answer = answer;
-            console.log(`${this.username} of Game ${this.game.id} answered.`);
+            console.log(`Player ${this.username} of Game ${this.game.id} answered.`);
 
             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
 
-            this.game.onStateUpdated();
-            if (this.game.gamemode.settings.questionFinished(this.game)) this.game.doEndQuestion();
+            this.game.refreshParticipantScreens();
+            if (this.game.gamemode.settings.canEndQuestion(this.game)) this.game.doEndQuestion();
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first
@@ -50,17 +50,22 @@ export default class Player extends GameParticipant {
 
                     if (this.game.isUsernameAvailable(answer.name)) {
                         let oldMe = this.game.getOldPlayer(answer.name);
+                        
                         if (oldMe !== undefined) {
                             this.copy(oldMe); // copy old Player data
-                            console.log(answer.name + ' rejoined.');
-                            
+                            console.log(`${oldMe.username} rejoined as ${this.id}.`);
                         }
-                        this.username = answer.name;
-                        this._isSetUp = true;
-                        this.game.onStateUpdated();
-                        console.log(`Player ${this.id} chose name: ${answer.name}`);
+                        else {
+                            this.username = answer.name;
 
-                        this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
+                            console.log(`Player ${this.id} chose name ${answer.name}`);
+                            this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
+
+                            this._isSetUp = true;
+                        }
+
+                        this.game.refreshParticipantScreens();
+
                     }
                     else this.socket.emit('show error message', this.game.gamemode.standardErrorMessages["setup/duplicate-name-chosen"]); // feedback to player
                 }
@@ -77,8 +82,12 @@ export default class Player extends GameParticipant {
      * @param other Player to copy
      */
     public copy(other:Player) {
+        this.username = other.username;
+        this._isSetUp = other._isSetUp;
+
         this.points = other.points;
         this.answer = other.answer;
+
         this.currentScreen = other.currentScreen;
     }
 
