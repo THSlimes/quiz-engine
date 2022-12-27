@@ -2,7 +2,7 @@ import { Attributes } from "../../AttributeList";
 import TextStyling from "../../TextStyling";
 import InputUIComponent from "./InputUIComponent";
 
-export default class TextInputUIComponent extends InputUIComponent {
+export default class TextInput extends InputUIComponent {
 
     constructor(fieldName:string, placeholder='', initial='', styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
         super(

@@ -3,7 +3,7 @@ import { ContainerType } from "../../ContainerType";
 import TextStyling from "../../TextStyling";
 import TextUIComponent from "../TextUIComponent";
 
-export default class MultiSelectUIComponent extends TextUIComponent {
+export default class MultiSelectInput extends TextUIComponent {
 
     constructor(fieldName:string, options:Array<string>, minSelected=0, maxSelected=options.length, containerType:ContainerType=ContainerType.CENTERED_ROWS, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
         super(

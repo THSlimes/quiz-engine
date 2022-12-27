@@ -2,14 +2,15 @@ import { Attributes } from "../AttributeList";
 import ContainerType from "../ContainerType";
 import TextStyling from "../TextStyling";
 import TextUIComponent from "./TextUIComponent";
+import UIComponent from "./UIComponent";
 
-export default class HeaderUIComponent extends TextUIComponent {
+export default class Paragraph extends TextUIComponent {
 
-    constructor(text:string, size:1|2|3|4|5|6=1, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+    constructor(contents:Array<UIComponent|string>|string, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
         super(
-            'h'+size,
-            'ui-header',
-            [text],
+            'p',
+            'ui-paragraph',
+            contents,
             ContainerType.DEFAULT,
             styling,
             classes,

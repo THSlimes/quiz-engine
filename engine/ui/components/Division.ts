@@ -3,7 +3,7 @@ import ContainerType from "../ContainerType";
 import ContainerUIComponent from "./ContainerUIComponent";
 import UIComponent from "./UIComponent";
 
-export default class DivUIComponent extends ContainerUIComponent {
+export default class Division extends ContainerUIComponent {
 
     constructor(contents:Array<UIComponent>, containerType:ContainerType, classes?:Array<string>, attributes?:Attributes) {
         super(
