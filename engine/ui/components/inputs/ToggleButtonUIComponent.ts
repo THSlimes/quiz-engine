@@ -1,23 +1,18 @@
-import TextUIComponent from "../TextUIComponent";
+import { Attributes } from "../../AttributeList";
+import TextStyling from "../../TextStyling";
 import InputUIComponent from "./InputUIComponent";
 
-export default class ToggleButtonUIComponent implements TextUIComponent, InputUIComponent {
+export default class ToggleButtonUIComponent extends InputUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-toggle-button-input';
-
-    public readonly fieldName: string;
-
-    public readonly html:string;
-
-    constructor(fieldName:string, text:string, selected=false) {
-        this.fieldName = fieldName;
-
-        this.html =  `<input
-                        class="ui-component ui-input ${ToggleButtonUIComponent.CLASS_NAME} ${selected?'selected':''}"
-                        type="button"
-                        name="${fieldName}"
-                        value="${text}"
-                    >`;
+    constructor(fieldName:string, text:string, initial:boolean, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'button',
+            'ui-toggle-button-input',
+            fieldName,
+            styling,
+            (classes??[]).concat(initial?['ui-prop-selected']:[]),
+            attributes
+        );
     }
-    
+
 }

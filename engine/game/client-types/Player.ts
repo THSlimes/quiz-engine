@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import Game from "../Game";
-import GameParticipant from "../GameParticipant";
+import GameParticipant from "./GameParticipant";
 import Answer from "../questions/Answer";
 
 export default class Player extends GameParticipant {

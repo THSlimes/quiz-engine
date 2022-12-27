@@ -1,17 +1,20 @@
-import TextUIComponent from './TextUIComponent';
+import { Attributes } from "../AttributeList";
+import ContainerType from "../ContainerType";
+import TextStyling from "../TextStyling";
+import TextUIComponent from "./TextUIComponent";
 
-/**
- * An ErrorMessageUIComponent is a TextUIComponent where
- * error messages are put.
- */
-export default class ErrorMessageUIComponent implements TextUIComponent {
+export default class ErrorMessageUIComponent extends TextUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-error-message';
-
-    public readonly html:string;
-
-    constructor() {
-        this.html =  `<p class="ui-component ${ErrorMessageUIComponent.CLASS_NAME}" style="display:none;"></p>`;
+    constructor(styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'p',
+            'ui-error-message',
+            [],
+            ContainerType.CENTERED_ROWS,
+            styling,
+            classes,
+            attributes
+        );
     }
 
 }

@@ -3,11 +3,10 @@ import ErrorMessageUIComponent from "../../ui/components/ErrorMessageUIComponent
 import HeaderUIComponent from "../../ui/components/HeaderUIComponent";
 import MultiSelectUIComponent from "../../ui/components/inputs/MultiSelectUIComponent";
 import NextScreenButtonUIComponent from "../../ui/components/inputs/NextScreenButtonUIComponent";
-import SelectUIComponent from "../../ui/components/inputs/SelectUIComponent";
 import StartGameButtonUIComponent from "../../ui/components/inputs/StartGameButtonUIComponent";
 import TextInputUIComponent from "../../ui/components/inputs/TextInputUIComponent";
 import ContainerType from "../../ui/ContainerType";
-import Screen from "../../ui/Screen";
+import { StaticScreen } from "../../ui/Screen";
 import Gamemode from "./GameMode";
 
 const BASIC_GAMEMODE:Gamemode = {
@@ -29,26 +28,23 @@ const BASIC_GAMEMODE:Gamemode = {
 
     standardScreens: {
 
-        namePickScreen: new Screen(
-            'choose name',
+        namePickScreen: new StaticScreen(
             [
                 new HeaderUIComponent('Choose a name.', 1),
                 new TextInputUIComponent('name','Name...'),
                 new ErrorMessageUIComponent(),
-                new NextScreenButtonUIComponent('choose name', "Confirm", true, true)
+                new NextScreenButtonUIComponent("Confirm", true, true)
             ]
         ),
 
-        waitingScreen: new Screen(
-            'waiting screen',
+        waitingScreen: new StaticScreen(
             [
                 new HeaderUIComponent('Waiting...')
             ]
         ),
 
         lobbyScreen(game) {
-            return new Screen(
-                'lobby screen',
+            return new StaticScreen(
                 [
                     new HeaderUIComponent('Waiting for Players...', 1),
                     new DivUIComponent(
@@ -91,13 +87,13 @@ const BASIC_GAMEMODE:Gamemode = {
     generateQuestions(game) {
         return [
             {
-                hubScreen: new Screen('question 1', [
+                hubScreen: new StaticScreen([
                     new HeaderUIComponent('What is the correct answer?'),
                 ]),
-                playerScreen: new Screen('question 1', [
+                playerScreen: new StaticScreen([
                     new HeaderUIComponent('Choose the correct answer.'),
-                    new MultiSelectUIComponent('answer', ['correct', 'incorrect'], ContainerType.CENTERED_ROWS, 1, 1),
-                    new NextScreenButtonUIComponent('next screen', 'Confirm', true, true)
+                    new MultiSelectUIComponent('answer', ['correct', 'incorrect'], 1, 1),
+                    new NextScreenButtonUIComponent('Confirm', true, true)
                 ]),
                 eval(answer) {
                     if (answer.answer === 'correct') return 100;

@@ -1,37 +1,24 @@
-import TextUIComponent from "../TextUIComponent";
-import InputUIComponent from "./InputUIComponent";
+import { Attributes } from '../../AttributeList';
+import TextStyling from '../../TextStyling';
+import InputUIComponent from './InputUIComponent';
 
-export default class NumberInputUIComponent implements TextUIComponent, InputUIComponent {
+export default class NumberInputUIComponent extends InputUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-number-input';
-
-    public readonly fieldName: string;
-
-    public readonly html:string;
-
-    constructor(fieldName:string, min=0, max?:number, step=1, initialValue=min) {
-        this.fieldName = fieldName;
-
-        if (max === undefined) {
-            this.html = `<input
-                            class="ui-component ui-input ${NumberInputUIComponent.CLASS_NAME}"
-                            type="number"
-                            name="${fieldName}"
-                            min="${min}"
-                            step="${step}"
-                            value="${initialValue}"
-                        >`;
-        }
-        else this.html = `<input
-                            class="ui-component ui-input ${NumberInputUIComponent.CLASS_NAME}"
-                            type="number"
-                            name="${fieldName}"
-                            min="${min}"
-                            max="${max}"
-                            step="${step}"
-                            value="${initialValue}"
-                        >`;
-
+    constructor(fieldName:string, min=0, max=100, step=1, initial=min, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'number',
+            'ui-number-input',
+            fieldName,
+            styling,
+            classes,
+            {
+                ...(attributes ?? {}),
+                min: min.toString(),
+                max: max.toString(),
+                step: step.toString(),
+                value: initial.toString()
+            }
+        );
     }
-    
+
 }

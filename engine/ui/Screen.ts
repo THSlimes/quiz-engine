@@ -1,21 +1,17 @@
+import Game from "../game/Game";
+import ContainerType from "./ContainerType";
+import ContainerUIComponent from "./components/ContainerUIComponent";
 import UIComponent from "./components/UIComponent";
 
-export default class Screen {
+export class StaticScreen extends ContainerUIComponent {
 
-    private static readonly CLASS_NAME = 'screen';
-
-    public readonly name:string;
-    public readonly components:Array<UIComponent>;
-    public next:Screen|undefined;
-
-    constructor(name:string, components:Array<UIComponent>, next?:Screen) {
-        this.name = name;
-        this.components = components;
-        this.next = next;
-    }
-
-    public addComponent(component:UIComponent) {
-        this.components.push(component);
+    constructor(components:Array<UIComponent>) {
+        super('div','screen',components,ContainerType.CENTERED_ROWS);
     }
 
 }
+
+export type RefreshableScreen = (game:Game) => Screen;
+
+type Screen = StaticScreen | RefreshableScreen;
+export default Screen;

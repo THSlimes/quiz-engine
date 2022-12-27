@@ -1,33 +1,25 @@
-import ContainerType from "../../ContainerType";
+import { Attributes } from "../../AttributeList";
+import { ContainerType } from "../../ContainerType";
+import TextStyling from "../../TextStyling";
 import TextUIComponent from "../TextUIComponent";
-import InputUIComponent from "./InputUIComponent";
 
-export default class MultiSelectUIComponent implements TextUIComponent, InputUIComponent {
+export default class MultiSelectUIComponent extends TextUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-multi-select-input';
-    private static readonly CHILD_CLASS_NAME = 'ui-multi-select-button';
-
-    public readonly fieldName: string;
-
-    public readonly html: string;
-
-    constructor(fieldName:string, options:Array<string>, containerType:ContainerType=ContainerType.CENTERED_ROWS, minSelected=0, maxSelected=options.length) {
-        this.fieldName = fieldName;
-
-        let newHtml = `<div
-                            class="ui-component ui-input ${containerType} ${MultiSelectUIComponent.CLASS_NAME}"
-                            name="${fieldName}"
-                            min=${minSelected}
-                            max="${maxSelected}"
-                        >`;
-
-        for (let i = 0; i < options.length; i ++) { // add options
-            newHtml += `<input class="ui-component ${MultiSelectUIComponent.CHILD_CLASS_NAME}" type="button" value="${options[i]}">`;
-        }
-
-        newHtml += '</div>';
-
-        this.html = newHtml;
+    constructor(fieldName:string, options:Array<string>, minSelected=0, maxSelected=options.length, containerType:ContainerType=ContainerType.CENTERED_ROWS, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'div',
+            'ui-input ui-multi-select-input',
+            options.map(opt => `<input class="ui-component ui-multi-select-button" type="button" value="${opt}" style="${styling?styling.toString():''}">`),
+            containerType,
+            styling,
+            classes,
+            {
+                ...(attributes??{}),
+                name: fieldName,
+                min: minSelected.toString(),
+                max: maxSelected.toString()
+            }
+        );
     }
 
 }

@@ -1,13 +1,15 @@
+import { Attributes } from "../AttributeList";
 import UIComponent from "./UIComponent";
 
-export default class ImageUIComponent implements UIComponent {   
+export default class ImageUIComponent extends UIComponent {
 
-    private static readonly CLASS_NAME = 'ui-image';
-
-    public readonly html:string;
-
-    constructor(source:string, alt='') {
-        this.html =  `<img class="ui-component ${ImageUIComponent.CLASS_NAME}" src="${source}" alt="${alt}">`;
+    constructor(source:string, alt='', classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'img',
+            'ui-image',
+            classes,
+            attributes
+        );
     }
-    
+
 }

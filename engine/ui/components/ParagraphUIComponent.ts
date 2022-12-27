@@ -1,14 +1,19 @@
-import TextUIComponent from './TextUIComponent';
-import UIComponent from './UIComponent';
+import { Attributes } from "../AttributeList";
+import TextStyling from "../TextStyling";
+import TextUIComponent from "./TextUIComponent";
+import UIComponent from "./UIComponent";
 
-export default class ParagraphUIComponent implements TextUIComponent {
+export default class ParagraphUIComponent extends TextUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-paragraph';
-
-    public readonly html:string;
-
-    constructor(text:string) {
-        this.html =  `<p class="ui-component ${ParagraphUIComponent.CLASS_NAME}">${text}</p>`;
+    constructor(contents:Array<UIComponent|string>|string, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'p',
+            'ui-paragraph',
+            contents,
+            styling,
+            classes,
+            attributes
+        );
     }
 
 }

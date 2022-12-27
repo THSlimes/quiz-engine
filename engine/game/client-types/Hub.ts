@@ -1,8 +1,6 @@
 import { Socket } from "socket.io";
-import HeaderUIComponent from "../../ui/components/HeaderUIComponent";
-import Screen from "../../ui/Screen";
 import Game from "../Game";
-import GameParticipant from "../GameParticipant";
+import GameParticipant from "./GameParticipant";
 
 export default class Hub extends GameParticipant {
 

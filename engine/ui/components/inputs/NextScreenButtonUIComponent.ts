@@ -1,31 +1,24 @@
-import TextUIComponent from "../TextUIComponent";
+import { Attributes } from "../../AttributeList";
+import TextStyling from "../../TextStyling";
 import InputUIComponent from "./InputUIComponent";
 
-export default class NextScreenButtonUIComponent implements TextUIComponent, InputUIComponent {
+export default class NextScreenButtonUIComponent extends InputUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-next-screen-button';
-
-    public readonly fieldName: string;
-
-    public readonly html:string;
-
-    /**
-     * A button that takes the user to the next screen.
-     * @param fieldName name of the button
-     * @param requiresAnswers whether the user must fill in all inputs before this button is enabled
-     * @param submitAnswer whether this button submits the current inputs
-     */
-    constructor(fieldName:string, text:string, requiresAnswers=false, submitAnswer=false) {
-        this.fieldName = fieldName;
-
-        this.html = `<input
-                        class="ui-component ${NextScreenButtonUIComponent.CLASS_NAME}"
-                        type="button"
-                        name="${fieldName}"
-                        value="${text}"
-                        ${requiresAnswers?'disabled':''}
-                        onclick="nextScreen(); ${submitAnswer?'submitAnswer();':''}"
-                    >`;
+    constructor(text:string, requiresAnswers=false, submitAnswer=false, styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'button',
+            'ui-next-screen-button',
+            'next screen',
+            styling,
+            classes,
+            {
+                ...(attributes??{}),
+                ...(requiresAnswers?{disabled:'true'}:{}),
+                value: text,
+                onclick: "nextScreen();" + submitAnswer?'submitAnswer();':''
+            }
+        );
+        
     }
-    
+
 }

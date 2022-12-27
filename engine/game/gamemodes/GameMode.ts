@@ -44,12 +44,12 @@ export default interface Gamemode {
         /**
          * The Screen that is shown on the Hub before the Game starts.
          */
-        readonly lobbyScreen:RefreshableScreen;
+        readonly lobbyScreen:Screen;
 
     }
 
     /**
-     * Eventhandlers for standard Game behaviours, such
+     * Eventhandlers for standard Game behaviors, such
      * as starting and ending.
      */
     standardEvents: {
@@ -81,10 +81,3 @@ export default interface Gamemode {
     generateQuestions:(game:Game) => Array<Question>,
 
 }
-
-/**
- * A RefreshableScreen is a Screen as a function of the current Game state.
- * This means that when the Game state is updated, the output screen should
- * change as well.
- */
-export type RefreshableScreen = (game:Game) => Screen;

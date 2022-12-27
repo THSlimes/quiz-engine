@@ -1,12 +1,12 @@
 // library imports
-import express, {Express, Request, Response} from 'express';
+import express, {Express} from 'express';
 import * as http from 'http';
 import { Server, Socket } from 'socket.io';
 
 import * as crypto from 'crypto';
 
 import { ServerConfig } from '../config';
-import Client from './Client';
+import Client from './game/client-types/Client';
 import Hub from './game/client-types/Hub';
 import Player from './game/client-types/Player';
 import Game from './game/Game';

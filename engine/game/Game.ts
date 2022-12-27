@@ -1,7 +1,7 @@
 import Hub from "./client-types/Hub";
 import Player from "./client-types/Player";
 import GameMode from "./gamemodes/GameMode";
-import GameParticipant from "./GameParticipant";
+import GameParticipant from "./client-types/GameParticipant";
 import Question from "./questions/Questions";
 
 export default class Game {

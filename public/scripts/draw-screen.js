@@ -2,21 +2,20 @@ import './lib/jquery.js';
 import socket from './socket-io-connect.js';
 import { allAnswered } from './collect-answers.js';
 
-socket.on('draw screen', renderScreen);
+socket.on('draw screen', drawScreen);
 
 export var currentScreen = undefined;
-export function renderScreen(screen) {
+export function drawScreen(screen) {
     if (screen === undefined) $('#login').fadeIn();
     else $('#login').fadeOut();
 
-    console.log('Drawing screen: ' + screen.name);
+    console.log('Drawing new screen');
+    console.log(screen);
     
-    const screenDiv = $('div#screen');
-    screenDiv.children().remove();
-    for (let i = 0; i < screen.components.length; i ++) {
-        screenDiv.append(screen.components[i].html);
-    }
-    
+    const screenContainer = $('div#screen-container');
+    screenContainer.children().remove();
+    screenContainer.append(screen);
+
     currentScreen = screen;
 
     // enabling next screen buttons

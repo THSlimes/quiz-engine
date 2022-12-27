@@ -1,8 +1,8 @@
-import { renderScreen, currentScreen } from './draw-screen.js';
+import { drawScreen, currentScreen } from './draw-screen.js';
 
 window.nextScreen = function() {
     if (currentScreen.next) {
-        renderScreen(currentScreen.next);
+        drawScreen(currentScreen.next);
     }
     else console.log('No next screen to render');
 }

@@ -1,24 +1,22 @@
-import TextUIComponent from "../TextUIComponent";
+import { Attributes } from "../../AttributeList";
+import TextStyling from "../../TextStyling";
 import InputUIComponent from "./InputUIComponent";
 
-export default class TextInputUIComponent implements TextUIComponent, InputUIComponent {
+export default class TextInputUIComponent extends InputUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-text-input';
-
-    public readonly fieldName: string;
-
-    public readonly html:string;
-
-    constructor(fieldName:string, placeholder='', initialValue='') {
-        this.fieldName = fieldName;
-
-        this.html =  `<input
-                        class="ui-component ui-input ${TextInputUIComponent.CLASS_NAME}"
-                        type="text"
-                        name="${fieldName}"
-                        placeholder="${placeholder}"
-                        value="${initialValue}"
-                    >`;
+    constructor(fieldName:string, placeholder='', initial='', styling?:TextStyling, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'text',
+            'ui-text-input',
+            fieldName,
+            styling,
+            classes,
+            {
+                ...(attributes??{}),
+                placeholder: placeholder,
+                value: initial
+            }
+        );
     }
-    
+
 }

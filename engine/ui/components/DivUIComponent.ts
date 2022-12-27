@@ -1,29 +1,19 @@
+import { Attributes } from "../AttributeList";
 import ContainerType from "../ContainerType";
+import ContainerUIComponent from "./ContainerUIComponent";
 import UIComponent from "./UIComponent";
 
-export default class DivUIComponent implements UIComponent {
+export default class DivUIComponent extends ContainerUIComponent {
 
-    private static readonly CLASS_NAME = 'ui-div';
-
-    public html: string = `<div class="${DivUIComponent.CLASS_NAME}">`;
-
-    public children:Array<UIComponent>;
-    public containerType:ContainerType;
-
-    constructor(children:Array<UIComponent>, containerType:ContainerType) {
-        this.children = children;
-        this.containerType = containerType;
-        this.reloadHtml();
-    }
-
-    private reloadHtml() {
-        let newHtml = `<div class="ui-component ${DivUIComponent.CLASS_NAME} ${this.containerType}">`;
-        for (let i = 0; i < this.children.length; i ++) {
-            newHtml += this.children[i].html;
-        }
-        newHtml += '</div>';
-
-        this.html = newHtml;
+    constructor(contents:Array<UIComponent>, containerType:ContainerType, classes?:Array<string>, attributes?:Attributes) {
+        super(
+            'div',
+            'ui-div',
+            contents,
+            containerType,
+            classes,
+            attributes
+        );
     }
 
 }
