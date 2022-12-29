@@ -94,7 +94,7 @@ export default class GameServer {
             if (id in this.games) { // valid id
                 const game = this.games[id];
 
-                if (game.players.length >= game.gamemode.settings.maxPlayers) socket.emit('show error message','That Game is full.');
+                if (game.players.length >= game.gamemode.settings.editable.maxPlayers) socket.emit('show error message','That Game is full.');
                 else if (role === 'player') game.connect(new Player(socket, game));
                 else if (role === 'hub') game.connect(new Hub(socket, game));
                 else console.log(`Client ${client.id} tried to use non-existent role ${role}.`);

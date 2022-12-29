@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import Game from "../Game";
+import Game, { GamePhase } from "../Game";
 import GameParticipant from "./GameParticipant";
 import Answer from "../questions/Answer";
 
@@ -12,6 +12,7 @@ export default class Player extends GameParticipant {
      */
     get isSetUp() { return this._isSetUp; }
     public points = 0;
+    public rank = 0;
     public answer:Answer|undefined;
 
     /**
@@ -33,15 +34,15 @@ export default class Player extends GameParticipant {
      */
     private onAnswer(answer:Answer) {
         if (this.isSetUp) { // actual Answer to Question
-            // evaluate answer
-            this.points += this.game.currentQuestion!.eval(answer);
+            this.points += this.game.currentQuestion!.eval(answer); // evaluate answer and grant points
             this.answer = answer;
-            console.log(`Player ${this.username} of Game ${this.game.id} answered.`);
+            console.log(`Player ${this.username} of Game ${this.game.id} answered:`);
+            console.log(answer);
 
             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
 
             this.game.refreshParticipantScreens();
-            if (this.game.gamemode.settings.canEndQuestion(this.game)) this.game.doEndQuestion();
+            if (this.game.phase === GamePhase.QUESTION && this.game.gamemode.settings.canEndQuestion(this.game)) this.game.doEndQuestion();
         }
         else { // answer to set up Question
             if (this.username === undefined) { // name is chosen first

@@ -1,4 +1,4 @@
-import Screen, { RefreshableScreen } from "../../ui/Screen";
+import Screen, { RefreshableScreen, ScreenPair } from "../../ui/Screen";
 import Game from "../Game";
 import Question from "../questions/Questions";
 
@@ -21,13 +21,18 @@ export default interface Gamemode {
 
     /**
      * Specifies settings that are common amongst
-     * different Gamemodes
+     * different Gamemodes.
      */
     settings: {
-        minPlayers: number,
-        maxPlayers: number,
-        allowDuplicateNames: boolean,
-        ignoreNameCapitalization: boolean,
+        /**
+         * Settings that may be edited by the Hub.
+         */
+        editable: {
+            minPlayers: number,
+            maxPlayers: number,
+            allowDuplicateNames: boolean,
+            ignoreNameCapitalization: boolean
+        }
 
         showIntermediateResults:(game:Game) => boolean,
 
@@ -66,14 +71,19 @@ export default interface Gamemode {
         readonly lobbyScreen:RefreshableScreen;
 
         /**
-         * The Screen that shows the intermediate results of an ongoing Game.
+         * The Screens that shows the intermediate results of an ongoing Game.
          */
-        readonly intermediateResultsScreen:RefreshableScreen;
+        readonly intermediateResultsScreen:ScreenPair;
 
         /**
-         * The Screen that is shown when after Questions have finished.
+         * The Screens that is shown when after Questions have finished.
          */
-        readonly finalResultsScreen:RefreshableScreen;
+        readonly finalResultsScreen:ScreenPair;
+
+        /**
+         * The Screens that is shown after the final results.
+         */
+        readonly postGameScreen:ScreenPair;
 
     }
 
@@ -86,7 +96,8 @@ export default interface Gamemode {
         onNewQuestion(question:Question):void,
         onQuestionEnds(game:Game, question:Question):void,
         onIntermediateResults(game:Game):void,
-        onFinalResults(game:Game):void
+        onFinalResults(game:Game):void,
+        onPostGame(game:Game):void
     }
 
     /**

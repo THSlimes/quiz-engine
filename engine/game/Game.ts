@@ -4,25 +4,38 @@ import GameMode from "./gamemodes/GameMode";
 import GameParticipant from "./client-types/GameParticipant";
 import Question from "./questions/Questions";
 
+export enum GamePhase {
+    PRE,
+    STARTING,
+    QUESTION,
+    INTERMEDIATE_RESULTS,
+    FINAL_RESULTS,
+    POST
+}
+
 export default class Game {
 
-    public readonly id:string;
-    public readonly gamemode:GameMode;
+    public readonly id:string; // id of the Game
+    public readonly gamemode:GameMode; // Gamemode being used for this Game
+
+    private _phase:GamePhase = GamePhase.PRE;
+    public get phase() { return this._phase; } // The GamePhase this Game is in
     
     private static readonly OLD_PLAYERS_MEM = 10; // How many Players that have left are stored
     public readonly oldPlayers:Array<Player> = []; // FIFO queue of Players that left (newest -> oldest)
     public readonly players:Array<Player> = []; // current Players
     private hub:Hub|undefined; // Hub showing "projector" screen
 
-    private questions:Array<Question>|undefined;
+    private questions:Array<Question>|undefined; // list of Questions
     private cqi = -1; // Current Question Index
-    public get questionNumber() { return this.cqi+1; }
-    public get currentQuestion() { return this.questions === undefined ? undefined : this.questions[this.cqi]; }
+    public get questionNumber() { return this.cqi+1; } // Number of the current Question (1-indexed)
+    public get currentQuestion() { return (this.questions??[])[this.cqi]; } // the current Question
     /**
      * Gives the next Question.
      * @returns the next Question (undefined if not available)
      */
-    public nextQuestion() { return this.questions ? this.questions[++this.cqi] : undefined }
+    public nextQuestion() { return (this.questions??[])[++this.cqi]; }
+    private currentQuestionTimeout?:NodeJS.Timeout;
 
     /**
      * Creates a new Game object.
@@ -110,7 +123,7 @@ export default class Game {
      * @returns true if game started, false otherwise
      */
     public doAttemptStart() {
-        if (this.players.length >= this.gamemode.settings.minPlayers && this.gamemode.settings.canStart(this)) {
+        if (this.players.length >= this.gamemode.settings.editable.minPlayers && this.gamemode.settings.canStart(this)) {
             this.doStart();
             return true;
         }
@@ -121,6 +134,8 @@ export default class Game {
      * Starts this Game.
      */
     private doStart() {
+        this._phase = GamePhase.STARTING;
+
         this.questions = this.gamemode.generateQuestions(this); // generate Questions
 
         this.gamemode.standardEvents.onGameStart(this); // event
@@ -134,12 +149,22 @@ export default class Game {
     public doNextQuestion() {
         const question = this.nextQuestion();
         if (question !== undefined) {
+            this._phase = GamePhase.QUESTION;
+
             // show screens
-            this.hub!.currentScreen = question.hubScreen;
+            this.hub!.currentScreen = question.screens.hub;
             this.players.forEach(player => {
                 player.answer = undefined;
-                player.currentScreen = question.playerScreen;
+                player.currentScreen = question.screens.player;
             });
+
+            // start timeout if needed
+            if (question.timeout !== undefined) {
+                this.currentQuestionTimeout = setTimeout(() => { // start timeout
+                    console.log(`Game ${this.id} ended the Question through timeout.`);
+                    this.doEndQuestion();
+                }, question.timeout);
+            }
 
             this.gamemode.standardEvents.onNewQuestion(question); // event hook
         }
@@ -152,43 +177,59 @@ export default class Game {
      */
     public doEndQuestion() {
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
-        this.gamemode.standardEvents.onQuestionEnds(this, this.currentQuestion as Question);
+        this.players.forEach((p,i) => p.rank = i);
 
-        console.log(this.questionNumber);
-        console.log(this.questions?.length);
-        
-        
+        this.gamemode.standardEvents.onQuestionEnds(this, this.currentQuestion as Question);  
 
-        if (this.questionNumber >= (this.questions?.length??0)) { // last Question ended -> end Game
-            this.doFinalResults();
+        if (this._phase === GamePhase.QUESTION) {
+            clearTimeout(this.currentQuestionTimeout); // clear timeout when needed
+
+            if (this.questionNumber >= (this.questions?.length??0)) { // last Question ended -> end Game
+                this.doFinalResults();
+            }
+            else if (this.gamemode.settings.showIntermediateResults(this)) { // Gamemode wants to show intermediate results
+                this.doIntermediateResults();
+            }
+            else this.doNextQuestion(); // prompt next Question
         }
-        else if (this.gamemode.settings.showIntermediateResults(this)) { // Gamemode wants to show intermediate results
-            this.doIntermediateResults();
-        }
-        else this.doNextQuestion(); // prompt next Question
+        else console.log(`WARNING: Cannot end Question outside of QUESTION GamePhase.`);
     }
 
     /**
      * This method shows the intermediate results.
      */
     public doIntermediateResults() {
+        this._phase = GamePhase.INTERMEDIATE_RESULTS;
+
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
+        this.players.forEach((p,i) => p.rank = i);
 
         this.gamemode.standardEvents.onIntermediateResults(this);
 
-        this.hub!.currentScreen = this.gamemode.standardScreens.intermediateResultsScreen(this); // show Screen
+        this.hub!.currentScreen = this.gamemode.standardScreens.intermediateResultsScreen.hub; // show Screen
+        this.players.forEach(p => p.currentScreen = this.gamemode.standardScreens.intermediateResultsScreen.player);
     }
 
     /**
      * This method is called when there are no more Questions left, showing the final results.
      */
     public doFinalResults() {
-        console.trace(`Game ${this.id} ended.`);
+        this._phase = GamePhase.FINAL_RESULTS;
+
+        console.log(`Game ${this.id} ended.`);
         this.players.sort((a, b) => b.points-a.points); // sort Players by points
+        this.players.forEach((p,i) => p.rank = i);
 
         this.gamemode.standardEvents.onFinalResults(this);
 
-        this.hub!.currentScreen = this.gamemode.standardScreens.finalResultsScreen(this); // show Screen
+        this.hub!.currentScreen = this.gamemode.standardScreens.finalResultsScreen.hub; // show Screen
+        this.players.forEach(p => p.currentScreen = this.gamemode.standardScreens.finalResultsScreen.player);
+    }
+
+    public doEndGame() {
+        this._phase = GamePhase.POST;
+
+        this.players.forEach
     }
 
     /**
@@ -197,10 +238,10 @@ export default class Game {
      * @returns true if not yet picked, false otherwise
      */
     public isUsernameAvailable(username:string) {
-        if (this.gamemode.settings.allowDuplicateNames) return true;
+        if (this.gamemode.settings.editable.allowDuplicateNames) return true;
 
         return !this.players.some(player => {
-            if (this.gamemode.settings.ignoreNameCapitalization) {
+            if (this.gamemode.settings.editable.ignoreNameCapitalization) {
                 return player.username?.toLocaleLowerCase() === username.toLocaleLowerCase();
             }
             else return player.username === username;
