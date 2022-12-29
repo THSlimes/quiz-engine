@@ -1,5 +1,5 @@
 import { Attributes } from "../../AttributeList";
-import TextStyling from "../../TextStyling";
+import TextStyling from "../../styling/TextStyling";
 import InputUIComponent from "./InputUIComponent";
 
 export default class StartGameButton extends InputUIComponent {

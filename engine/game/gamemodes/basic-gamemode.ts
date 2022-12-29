@@ -7,6 +7,7 @@ import StartGameButton from "../../ui/components/inputs/StartGameButton";
 import TextInput from "../../ui/components/inputs/TextInput";
 import ContainerType from "../../ui/ContainerType";
 import { StaticScreen } from "../../ui/Screen";
+import StyleSheet from "../../ui/styling/StyleSheet";
 import Gamemode from "./GameMode";
 
 const BASIC_GAMEMODE:Gamemode = {
@@ -48,7 +49,13 @@ const BASIC_GAMEMODE:Gamemode = {
                 new TextInput('name','Name...'),
                 new ErrorMessageBox(),
                 new NextScreenButton("Confirm", true, true)
-            ]
+            ],
+            true,
+            new StyleSheet({
+                '.screen': {
+                    "background-color": '#FF0000'
+                }
+            })
         ),
 
         waitingScreen: new StaticScreen(
@@ -163,8 +170,8 @@ const BASIC_GAMEMODE:Gamemode = {
                     )
                 },
                 eval(answer) {
-                    if (answer.answer === 'correct') return 100;
-                    else return -100;
+                    answer.answer = answer.answer as Array<string>;
+                    return answer.answer.includes('correct') ? 100 : -100;
                 },
                 timeout: 10000
             }

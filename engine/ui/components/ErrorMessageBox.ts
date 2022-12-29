@@ -1,6 +1,6 @@
 import { Attributes } from "../AttributeList";
 import ContainerType from "../ContainerType";
-import TextStyling from "../TextStyling";
+import TextStyling from "../styling/TextStyling";
 import TextUIComponent from "./TextUIComponent";
 
 export default class ErrorMessageBox extends TextUIComponent {

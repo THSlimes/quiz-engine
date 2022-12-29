@@ -16,6 +16,7 @@ export function drawScreen(screen) {
 
         const screenContainer = $('div#screen-container');
         screenContainer.children().remove();
+        if (screen.styleSheet !== undefined) screenContainer.append(screen.styleSheet);
         screenContainer.append(screen.html);
 
         currentScreen = screen;
