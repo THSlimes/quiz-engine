@@ -1,8 +1,14 @@
+import AddonPack from "../../addons/AddonPack";
 import Screen, { RefreshableScreen, ScreenPair } from "../../ui/Screen";
 import Game from "../Game";
 import Question from "../questions/Questions";
 
 export default interface Gamemode {
+
+    /**
+     * Addons that will be used by the Game.
+     */
+    readonly addons:AddonPack;
 
     /**
      * Name of this Gamemode

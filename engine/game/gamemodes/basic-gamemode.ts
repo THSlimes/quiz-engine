@@ -8,6 +8,7 @@ import TextInput from "../../ui/components/inputs/TextInput";
 import ContainerType from "../../ui/ContainerType";
 import { StaticScreen } from "../../ui/Screen";
 import StyleSheet from "../../ui/styling/StyleSheet";
+import Question from "../questions/Questions";
 import Gamemode from "./GameMode";
 
 const BASIC_GAMEMODE:Gamemode = {
@@ -152,8 +153,8 @@ const BASIC_GAMEMODE:Gamemode = {
 
     generateQuestions(game) {
         return [
-            {
-                screens: {
+            new Question(
+                {
                     hub: new StaticScreen(
                         [
                             new Header('What is the correct answer?')
@@ -169,12 +170,12 @@ const BASIC_GAMEMODE:Gamemode = {
                         true
                     )
                 },
-                eval(answer) {
+                answer => {
                     answer.answer = answer.answer as Array<string>;
                     return answer.answer.includes('correct') ? 100 : -100;
                 },
-                timeout: 10000
-            }
+                10000
+            )
         ];
     }
     

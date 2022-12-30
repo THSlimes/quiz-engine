@@ -11,6 +11,7 @@ import Hub from './game/client-types/Hub';
 import Player from './game/client-types/Player';
 import Game from './game/Game';
 import Gamemode from './game/gamemodes/GameMode';
+import DataStores from './addons/DataStores';
 
 export default class GameServer {
     
@@ -95,8 +96,8 @@ export default class GameServer {
                 const game = this.games[id];
 
                 if (game.players.length >= game.gamemode.settings.editable.maxPlayers) socket.emit('show error message','That Game is full.');
-                else if (role === 'player') game.connect(new Player(socket, game));
-                else if (role === 'hub') game.connect(new Hub(socket, game));
+                else if (role === 'player') game.connect(new Player(socket, game, new DataStores<Player>(...game.gamemode.addons.getDefaultStores(Player))));
+                else if (role === 'hub') game.connect(new Hub(socket, game, new DataStores<Player>(...game.gamemode.addons.getDefaultStores(Hub))));
                 else console.log(`Client ${client.id} tried to use non-existent role ${role}.`);
             }
             else { // invalid id

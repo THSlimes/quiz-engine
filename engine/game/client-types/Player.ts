@@ -2,15 +2,17 @@ import { Socket } from "socket.io";
 import Game, { GamePhase } from "../Game";
 import GameParticipant from "./GameParticipant";
 import Answer from "../questions/Answer";
+import DataStores from "../../addons/DataStores";
 
 export default class Player extends GameParticipant {
 
+    public readonly dataStores:DataStores<Player>;
+
     public username:string|undefined;
-    private _isSetUp = false;
     /**
      * Whether this Player is done with their set up.
      */
-    get isSetUp() { return this._isSetUp; }
+    get isSetUp() { return this.username !== undefined && this.dataStores.allSetup(); }
     public points = 0;
     public rank = 0;
     public answer:Answer|undefined;
@@ -19,13 +21,16 @@ export default class Player extends GameParticipant {
      * Creates a new Player in the context of a Game.
      * @param socket Socket the Player is connected through
      * @param game the Game the Player belongs to
+     * @param dataStores the Addon-specific data packets
      */
-    constructor(socket:Socket, game:Game) {
+    constructor(socket:Socket, game:Game, dataStores?:DataStores<Player>) {
         super(socket,game);
 
         // adding event handlers
         this.socket.on('disconnect', () => this.game.disconnect(this)); // leaving Game on disconnect
         this.socket.on('answer', answer => this.onAnswer(answer as Answer)); // submitting an answer
+
+        this.dataStores = dataStores ?? new DataStores<Player>();
     }
 
     /**
@@ -34,7 +39,7 @@ export default class Player extends GameParticipant {
      */
     private onAnswer(answer:Answer) {
         if (this.isSetUp) { // actual Answer to Question
-            this.points += this.game.currentQuestion!.eval(answer); // evaluate answer and grant points
+            this.points += this.game.currentQuestion!.evaluate(answer); // evaluate answer and grant points
             this.answer = answer;
             console.log(`Player ${this.username} of Game ${this.game.id} answered:`);
             console.log(answer);
@@ -61,8 +66,6 @@ export default class Player extends GameParticipant {
 
                             console.log(`Player ${this.id} chose name ${answer.name}`);
                             this.currentScreen = this.game.gamemode.standardScreens.waitingScreen;
-
-                            this._isSetUp = true;
                         }
 
                         this.game.refreshParticipantScreens();
@@ -84,7 +87,6 @@ export default class Player extends GameParticipant {
      */
     public copy(other:Player) {
         this.username = other.username;
-        this._isSetUp = other._isSetUp;
 
         this.points = other.points;
         this.answer = other.answer;

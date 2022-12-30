@@ -3,6 +3,7 @@ import Player from "./client-types/Player";
 import GameMode from "./gamemodes/GameMode";
 import GameParticipant from "./client-types/GameParticipant";
 import Question from "./questions/Questions";
+import DataStores from "../addons/DataStores";
 
 export enum GamePhase {
     PRE,
@@ -14,6 +15,8 @@ export enum GamePhase {
 }
 
 export default class Game {
+
+    public readonly dataStores:DataStores<Game>;
 
     public readonly id:string; // id of the Game
     public readonly gamemode:GameMode; // Gamemode being used for this Game
@@ -45,6 +48,8 @@ export default class Game {
     constructor(id:string, gamemode:GameMode) {
         this.id = id;
         this.gamemode = gamemode;
+
+        this.dataStores = new DataStores<Game>(...this.gamemode.addons.getDefaultStores(Game));
     }
 
     /**
