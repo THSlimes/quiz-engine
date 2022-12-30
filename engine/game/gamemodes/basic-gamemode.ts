@@ -1,3 +1,4 @@
+import AddonPack from "../../addons/AddonPack";
 import Division from "../../ui/components/Division";
 import ErrorMessageBox from "../../ui/components/ErrorMessageBox";
 import Header from "../../ui/components/Header";
@@ -13,6 +14,7 @@ import Gamemode from "./GameMode";
 
 const BASIC_GAMEMODE:Gamemode = {
 
+    addons: new AddonPack(),
     name: 'Basic Gamemode',
     
     standardErrorMessages: {

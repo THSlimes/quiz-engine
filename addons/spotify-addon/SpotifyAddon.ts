@@ -16,4 +16,8 @@ export default class SpotifyAddon implements Addon {
         return undefined;
     }
 
+    setup(): boolean {
+        return true;
+    }
+
 }

@@ -10,9 +10,17 @@ export default class DataStores<T extends DataStoreSupporter> {
         this.stores = stores;
     }
 
-    public get<A extends Addon>(A:Class<A>):DataStore<T>|undefined {
-        for (const store of this.stores) {
+    public getByAddon<A extends Addon>(A:Class<A>):DataStore<T>|undefined {
+        for (const store of this.stores) { // search for DataStore<T> from correct Addon
             if (store.type === A) return store;
+        }
+
+        return undefined;
+    }
+
+    public getByType<DS extends DataStore<T>>(DS:Class<DS>):DS|undefined {
+        for (const store of this.stores) { // search for DataStore<T> of correct type
+            if (store instanceof DS) return store;
         }
 
         return undefined;
